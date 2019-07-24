@@ -1,3 +1,36 @@
 body {
-    font-family: sans-serif;
+  font-family: sans-serif;
+}
+
+#consoleDiv {
+  height: 5em;
+  background-color: black;
+  overflow: scroll;
+  padding: .5em;
+  font-family: monospace;
+}
+#consoleDiv div {
+  color: grey;
+}
+#consoleDiv div::before {
+  content: ". ";
+}
+#consoleDiv :last-child {
+  color: white;
+}
+#consoleDiv :last-child::before {
+  content: "> ";
+}
+#consoleDiv :last-child::after{
+  content: "|";
+  animation: 1s blink step-end infinite;
+}
+
+@keyframes blink {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: white;
+  }
 }

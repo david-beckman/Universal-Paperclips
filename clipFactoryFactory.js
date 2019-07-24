@@ -5,6 +5,14 @@ var clipFactoryFactory = function() {
   const DefaultMakePaperclipButtonId = "makePaperclipButton"
 
   var _clips = InitialClips;
+  var _clipsUpdatedCallbacks = [];
+
+  var makeClip = function() {
+    _clips++;
+    _clipsUpdatedCallbacks.forEach(function(callback) {
+        callback(_clips);
+    });
+  };
 
   return {
     bind: function(paperclipsSpanId, makePaperclipButton) {
@@ -12,12 +20,15 @@ var clipFactoryFactory = function() {
       var button = document.getElementById(makePaperclipButton || DefaultMakePaperclipButtonId);
 
       var syncSpan;
-      (syncSpan = function() { span.innerText = _clips; })();
-    
+      (syncSpan = function() { span.innerText = _clips.toLocaleString(); })();
+
       button.onclick = function() {
-        _clips++;
+        makeClip();
         syncSpan();
       };
+    },
+    addClipsUpdatedCallback(callback) {
+      if (callback) _clipsUpdatedCallbacks.push(callback);
     }
   };
 }
