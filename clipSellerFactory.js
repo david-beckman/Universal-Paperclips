@@ -1,6 +1,11 @@
-var clipSellerFactory = function(accountant, clipPricer, clipWarehouse, _) {
+var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWarehouse, _) {
   if (!accountant || !accountant.creditCents) {
     console.assert(false, "No accountant hooked to the seller.");
+  }
+
+  if (!clipMarketing || !clipMarketing.getLevel || !clipMarketing.addLevelUpdatedCallback) {
+    console.assert(false, "No marketing hooked to the seller.");
+    return false;
   }
 
   if (!clipPricer || !clipPricer.getPriceCents || !clipPricer.addPriceCentsUpdatedCallback) {
@@ -14,23 +19,30 @@ var clipSellerFactory = function(accountant, clipPricer, clipWarehouse, _) {
     return false;
   }
 
+  const MarketingPower = 1.1;
   const PricingFactor = 80;
   const SellInterval = 100;
   const DemandFactor = .7;
   const DemandPower = 1.15;
 
   var getDemandPercent = function() {
-    return PricingFactor / clipPricer.getPriceCents();
+    var marketingBoost = Math.pow(MarketingPower, clipMarketing.getLevel() - 1);
+    var pricingBoost = PricingFactor / clipPricer.getPriceCents();
+    return marketingBoost * pricingBoost;
   }
 
   var _span;
   var syncSpan= function() {
     if (!_span) return;
     // Bug: Why 10 and not 100?
-    _span.innerText = (getDemandPercent() / 10).toLocaleString(undefined, {style: "percent", maximumFractionDigits: 1});
+    _span.innerText = (getDemandPercent() / 10).toLocaleString(undefined, {style: "percent"});
   }
 
   clipPricer.addPriceCentsUpdatedCallback(function() {
+    syncSpan();
+  });
+
+  clipMarketing.addLevelUpdatedCallback(function() {
     syncSpan();
   });
 

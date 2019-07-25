@@ -78,7 +78,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
       return {
         level: _level,
         ticks: getTicks()
-      }
+      };
     }
-  }
+  };
 };

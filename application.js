@@ -1,7 +1,7 @@
 (function() {
   const SaveName = "UniversalPaperclips"
 
-  var accountant, clipFactory, clipPricer, clipWarehouse, clipSeller, consoleAppender, milestoneTracker;
+  var accountant, clipFactory, clipMarketing, clipPricer, clipWarehouse, clipSeller, consoleAppender, milestoneTracker;
 
   var pendingSave = false;
   var save = function() {
@@ -13,6 +13,7 @@
       localStorage.setItem(SaveName, JSON.stringify({
         accountant: accountant.serialize(),
         clipFactory: clipFactory.serialize(),
+        clipMarketing: clipMarketing.serialize(),
         clipPricer: clipPricer.serialize(),
         clipSeller: clipSeller.serialize(),
         clipWarehouse: clipWarehouse.serialize(),
@@ -26,9 +27,10 @@
 
   (accountant = accountantFactory(savedGame.accountant)).bind(save);
   (clipFactory = clipFactoryFactory(savedGame.clipFactory)).bind(save);
+  (clipMarketing = clipMarketingFactory(accountant, savedGame.clipMarketing)).bind(save);
   (clipPricer = clipPricerFactory(savedGame.clipPricer)).bind(save);
   (clipWarehouse = clipWarehouseFactory(clipFactory, savedGame.clipWarehouse)).bind(save);
-  (clipSeller = clipSellerFactory(accountant, clipPricer, clipWarehouse, savedGame.clipSeller)).bind(save);
+  (clipSeller = clipSellerFactory(accountant, clipMarketing, clipPricer, clipWarehouse, savedGame.clipSeller)).bind(save);
   (consoleAppender = consoleAppenderFactory(savedGame.consoleAppender)).bind(save);
   (milestoneTracker = milestoneTrackerFactory(clipFactory, consoleAppender, savedGame.milestoneTracker)).bind(save);
 })();

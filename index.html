@@ -1,30 +1,41 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta charset="utf-8" />
   <title>Universal Paperclips</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <form action="" onsubmit="return false;">
+  <form action="." onsubmit="return false;">
     <div id="consoleDiv"></div>
-    <h1>Paperclips: <span id="clipsSpan">{amount}</span></h1>
-    <input type="button" id="makeClipButton" value="Make Paperclip" />
+    <div>
+      <h1>Paperclips: <span id="clipsSpan">{amount}</span></h1>
+      <input type="button" id="makeClipButton" value="Make Paperclip" />
+    </div>
     <div class="group">
       <h2>Business</h2>
-      <div>Available Funds: <span id="availableDollarsSpan">{amount}</span></div>
-      <div>Unsold Inventory: <span id="unshippedClipsSpan">{amount}</span></div>
-      <div>
-        <input type="button" id="decrementClipPriceCentsButton" value="lower" />
-        <input type="button" id="incrementClipPriceCentsButton" value="raise" />
-        Price per Clip: <span id="clipPriceDollarsSpan">{amount}</span>
-      </div>
+      <div class="sub-group">
+        <div>Available Funds: <span id="availableDollarsSpan">{amount}</span></div>
+        <div>Unsold Inventory: <span id="unshippedClipsSpan">{amount}</span></div>
+        <div>
+          <input type="button" id="decrementClipPriceCentsButton" value="lower" />
+          <input type="button" id="incrementClipPriceCentsButton" value="raise" />
+          Price per Clip: <span id="clipPriceDollarsSpan">{amount}</span>
+        </div>
       <div>Public Demand: <span id="publicDemandPercentSpan">{amount}</span></div>
+      </div>
+      <div class="sub-group">
+        <div>
+          <input type="button" id="incrementMarketingLevelButton" value="Marketing" />
+          Level: <span id="marketingLevelSpan">{amount}</span>
+        </div>
+        <div>Cost: <span id="marketingLevelPriceDollarsSpan">{amount}</span></div>
+      </div>
     </div>
   </form>
   <script src="accountantFactory.js"></script>
   <script src="clipFactoryFactory.js"></script>
+  <script src="clipMarketingFactory.js"></script>
   <script src="clipPricerFactory.js"></script>
   <script src="clipSellerFactory.js"></script>
   <script src="clipWarehouseFactory.js"></script>

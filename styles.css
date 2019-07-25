@@ -44,3 +44,7 @@ body {
   margin-bottom: .3em;
   border-bottom: 1px solid black;
 }
+
+.sub-group {
+  margin-bottom: 1em;
+}
