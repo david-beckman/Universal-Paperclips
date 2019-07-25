@@ -1,12 +1,12 @@
 var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
   if (!clipFactory || !clipFactory.addClipsUpdatedCallback) {
-      console.assert(false, "No clip factory connected to the milestone tracker.");
-      return;
+    console.assert(false, "No clip factory connected to the milestone tracker.");
+    return;
   }
 
   if (!consoleAppender || !consoleAppender.append) {
-      console.assert(false, "No console appender connected to the milestone tracker.")
-      return;
+    console.assert(false, "No console appender connected to the milestone tracker.")
+    return;
   }
 
   const InitialLevel = 0;
@@ -81,4 +81,4 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
       }
     }
   }
-}
+};

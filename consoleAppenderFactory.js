@@ -37,11 +37,6 @@ var consoleAppenderFactory = function(initial) {
     bind: function(save, consoleDivId) {
       if (save) _messagesUpdatedCallbacks.push(save);
 
-      if (_div) {
-        console.assert(false, "The console appender is already bound - cannot bind again.");
-        return false;
-      }
-
       _div = document.getElementById(consoleDivId || DefaultConsoleDivId);
       _pendingMessages.forEach(append);
 
@@ -53,4 +48,4 @@ var consoleAppenderFactory = function(initial) {
       };
     }
   };
-}
+};

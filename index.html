@@ -9,10 +9,25 @@
 <body>
   <form action="" onsubmit="return false;">
     <div id="consoleDiv"></div>
-    <h1>Paperclips: <span id="paperclipsSpan">{amount}</span></h1>
-    <input type="button" id="makePaperclipButton" value="Make Paperclip" />
+    <h1>Paperclips: <span id="clipsSpan">{amount}</span></h1>
+    <input type="button" id="makeClipButton" value="Make Paperclip" />
+    <div class="group">
+      <h2>Business</h2>
+      <div>Available Funds: <span id="availableDollarsSpan">{amount}</span></div>
+      <div>Unsold Inventory: <span id="unshippedClipsSpan">{amount}</span></div>
+      <div>
+        <input type="button" id="decrementClipPriceCentsButton" value="lower" />
+        <input type="button" id="incrementClipPriceCentsButton" value="raise" />
+        Price per Clip: <span id="clipPriceDollarsSpan">{amount}</span>
+      </div>
+      <div>Public Demand: <span id="publicDemandPercentSpan">{amount}</span></div>
+    </div>
   </form>
+  <script src="accountantFactory.js"></script>
   <script src="clipFactoryFactory.js"></script>
+  <script src="clipPricerFactory.js"></script>
+  <script src="clipSellerFactory.js"></script>
+  <script src="clipWarehouseFactory.js"></script>
   <script src="consoleAppenderFactory.js"></script>
   <script src="milestoneTrackerFactory.js"></script>
   <script src="application.js"></script>
