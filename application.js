@@ -20,7 +20,7 @@
         consoleAppender: consoleAppender.serialize(),
         milestoneTracker: milestoneTracker.serialize()
       }));
-    }, 1);
+    }, 10000); // Only save every 10s (on the outside)
   };
 
   var savedGame = JSON.parse(localStorage.getItem(SaveName) || "{}");
