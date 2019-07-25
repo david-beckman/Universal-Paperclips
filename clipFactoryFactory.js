@@ -1,21 +1,23 @@
-var clipFactoryFactory = function() {
+var clipFactoryFactory = function(initial) {
   const InitialClips = 0;
 
   const DefaultPaperclipsSpanId = "paperclipsSpan";
   const DefaultMakePaperclipButtonId = "makePaperclipButton"
 
-  var _clips = InitialClips;
+  var _clips = (initial && initial.clips) || InitialClips;
   var _clipsUpdatedCallbacks = [];
 
-  var makeClip = function() {
+  var make = function() {
     _clips++;
     _clipsUpdatedCallbacks.forEach(function(callback) {
-        callback(_clips);
+        setTimeout(function() { callback(_clips); }, 0);
     });
   };
 
   return {
-    bind: function(paperclipsSpanId, makePaperclipButton) {
+    bind: function(save, paperclipsSpanId, makePaperclipButton) {
+      if (save) _clipsUpdatedCallbacks.push(save);
+
       var span = document.getElementById(paperclipsSpanId || DefaultPaperclipsSpanId);
       var button = document.getElementById(makePaperclipButton || DefaultMakePaperclipButtonId);
 
@@ -23,12 +25,15 @@ var clipFactoryFactory = function() {
       (syncSpan = function() { span.innerText = _clips.toLocaleString(); })();
 
       button.onclick = function() {
-        makeClip();
+        make();
         syncSpan();
       };
     },
-    addClipsUpdatedCallback(callback) {
+    addClipsUpdatedCallback: function(callback) {
       if (callback) _clipsUpdatedCallbacks.push(callback);
+    },
+    serialize: function() {
+      return { clips: _clips };
     }
   };
 }

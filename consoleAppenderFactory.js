@@ -1,27 +1,42 @@
-var consoleAppenderFactory = function() {
-  DefaultConsoleDivId = "consoleDiv";
+var consoleAppenderFactory = function(initial) {
+  const DefaultConsoleDivId = "consoleDiv";
+  const InitialMessages = ["Welcome to Universal Paperclips"];
 
-  var _pendingMessages = ["Welcome to Universal Paperclips"];
+  var _pendingMessages = (initial && initial.messages) || InitialMessages;
 
   var _div;
-  var append = function(message) {
-    if (!_div) {
-      _pendingMessages.push(message);
-      return false;
-    }
+  var _messagesUpdatedCallbacks = new Array();
 
+  var messagesUpdated = function() {
+    _messagesUpdatedCallbacks.forEach(function(callback) {
+      setTimeout(function() { callback(); }, 0);
+    });
+  };
+
+  var append = function(message) {
     var child = document.createElement("div");
     child.innerText = message;
 
     _div.appendChild(child);
     _div.scrollTop = _div.scrollHeight;
-
-    return true;
   };
 
   return {
-    append: append,
-    bind: function(consoleDivId) {
+    append: function(message) {
+      if (!_div) {
+        _pendingMessages.push(message);
+        messagesUpdated();
+        return false;
+      }
+
+      append(message);
+      messagesUpdated();
+
+      return true;
+    },
+    bind: function(save, consoleDivId) {
+      if (save) _messagesUpdatedCallbacks.push(save);
+
       if (_div) {
         console.assert(false, "The console appender is already bound - cannot bind again.");
         return false;
@@ -31,6 +46,11 @@ var consoleAppenderFactory = function() {
       _pendingMessages.forEach(append);
 
       return true;
+    },
+    serialize() {
+      return {
+        messages: (_div && Array.from(_div.childNodes).map(function(child) { return child.innerText; })) || _pendingMessages
+      };
     }
   };
 }
