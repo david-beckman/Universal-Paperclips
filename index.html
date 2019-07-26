@@ -37,6 +37,13 @@
       <div class="sub-group">
         <div>Clips per Second: <span id="clipsPerSecondSpan">{amount}</span></div>
       </div>
+      <div class="sub-group">
+        <div>
+          <input type="button" id="buyWireSpoolButton" value="Wire" />
+          <span id="wireLengthSpan">{amount}</span> inches
+        </div>
+        <div>Cost: <span id="wireSpoolPriceDollarsSpan">{amount}</span></div>
+      </div>
     </div>
   </form>
   <script src="accountantFactory.js"></script>
@@ -47,6 +54,8 @@
   <script src="clipWarehouseFactory.js"></script>
   <script src="consoleAppenderFactory.js"></script>
   <script src="milestoneTrackerFactory.js"></script>
+  <script src="wireMarketFactory.js"></script>
+  <script src="wireSupplierFactory.js"></script>
   <script src="application.js"></script>
 </body>
 </html>

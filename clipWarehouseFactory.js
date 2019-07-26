@@ -56,9 +56,7 @@ var clipWarehouseFactory = function(clipFactory, initial) {
       return true;
     },
     serialize: function() {
-      return {
-        shipped: _shipped
-      };
+      return { shipped: _shipped };
     }
   };
 };
