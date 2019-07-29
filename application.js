@@ -12,6 +12,7 @@
       pendingSave = false;
       localStorage.setItem(SaveName, JSON.stringify({
         accountant: accountant.serialize(),
+        autoclipperFactory: autoclipperFactory.serialize(),
         clipFactory: clipFactory.serialize(),
         clipMarketing: clipMarketing.serialize(),
         clipPricer: clipPricer.serialize(),
@@ -27,21 +28,22 @@
 
   var savedGame = JSON.parse(localStorage.getItem(SaveName) || "{}");
 
-  // Level 1: No dependencies
+  // Level 0: No dependencies
   (accountant = accountantFactory(savedGame.accountant)).bind(save);
   (clipPricer = clipPricerFactory(savedGame.clipPricer)).bind(save);
   (consoleAppender = consoleAppenderFactory(savedGame.consoleAppender)).bind(save);
   (wireSupplier = wireSupplierFactory(savedGame.wireSupplier)).bind(save);
 
-  // Level 2: Only level 1 dependencies
+  // Level 1: Only level 0 dependencies
   (clipMarketing = clipMarketingFactory(accountant, savedGame.clipMarketing)).bind(save);
   (clipFactory = clipFactoryFactory(wireSupplier, savedGame.clipFactory)).bind(save);
   (wireMarket = wireMarketFactory(accountant, wireSupplier, savedGame.wireMarket)).bind(save);
 
-  // Level 3: At least one level 2 dependency
+  // Level 2: At least one level 1 dependency
+  (autoclipperFactory = autoclipperFactoryFactory(accountant, clipFactory, consoleAppender, savedGame.autoclipperFactory)).bind(save);
   (clipWarehouse = clipWarehouseFactory(clipFactory, savedGame.clipWarehouse)).bind(save);
   (milestoneTracker = milestoneTrackerFactory(clipFactory, consoleAppender, savedGame.milestoneTracker)).bind(save);
 
-  // Level 4: At least one level 3 dependency
+  // Level 3 ...
   (clipSeller = clipSellerFactory(accountant, clipMarketing, clipPricer, clipWarehouse, savedGame.clipSeller)).bind(save);
 })();

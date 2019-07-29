@@ -18,7 +18,10 @@ var wireSupplierFactory = function(initial) {
   }
 
   return {
-    addSpool() {
+    getLength: function() {
+      return _length;
+    },
+    addSpool: function() {
       _length += SpoolLength;
       syncSpan();
       _lengthUpdatedCallbacks.forEach(function(callback) {

@@ -27,6 +27,28 @@ var accountantFactory = function(initial) {
     return false;
   }
 
+  var canDebitCents = function(cents) {
+    if (!isValidCents(cents, "credit")) return false;
+
+    return cents <= _cents;
+  };
+
+  var debitCents = function(cents) {
+    if (!isValidCents(cents, "credit")) return false;
+
+    if (cents > _cents) {
+      console.warn("Insufficient funds (" + getDollarsLocaleString() + ") to debit " + (cents / 100).toLocaleString(undefined, {style: "currency", currency: "USD"}));
+      return false;
+    }
+
+    _cents -= cents;
+    syncSpan();
+    _centsUpdatedCallbacks.forEach(function(callback) {
+      setTimeout(function() { callback(_cents); }, 0);
+    });
+    return true;
+  };
+
   return {
     bind: function(save, availableDollarsSpanId) {
       if (save) _centsUpdatedCallbacks.push(save);
@@ -46,27 +68,15 @@ var accountantFactory = function(initial) {
 
       return true;
     },
+    canDebitCents: canDebitCents,
     canDebitDollars: function(dollars) {
       var cents = getCents(dollars);
-      if (!isValidCents(cents, "credit")) return false;
-
-      return cents <= _cents;
+      return canDebitCents(cents);
     },
+    debitCents: debitCents,
     debitDollars: function(dollars) {
       var cents = getCents(dollars);
-      if (!isValidCents(cents, "credit")) return false;
-
-      if (cents > _cents) {
-        console.warn("Insufficient funds (" + getDollarsLocaleString() + ") to debit " + dollars.toLocaleString(undefined, {style: "currency", currency: "USD"}));
-        return false;
-      }
-
-      _cents -= cents;
-      syncSpan();
-      _centsUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_cents); }, 0);
-      });
-      return true;
+      return debitCents(cents);
     },
     serialize: function() {
       return {
