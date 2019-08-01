@@ -15,7 +15,7 @@ var clipMarketingFactory = function(accountant, initial) {
 
   var getPriceDollars = function() {
     return BasePriceDollars * Math.pow(IncrementPower, _level - 1);
-  }
+  };
 
   var _incrementLevelButton;
   var syncIncrementButtonDisabledFlag = function(){
@@ -68,7 +68,9 @@ var clipMarketingFactory = function(accountant, initial) {
       if (callback) _levelUpdatedCallbacks.push(callback);
     },
     serialize: function() {
-      return { level: _level };
+      return {
+        level: _level
+      };
     }
   };
 };

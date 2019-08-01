@@ -1,7 +1,8 @@
 (function() {
-  const SaveName = "UniversalPaperclips"
+  const SaveName = "UniversalPaperclips";
 
-  var accountant, clipFactory, clipMarketing, clipPricer, clipWarehouse, clipSeller, consoleAppender, milestoneTracker, wireMarket, wireSupplier;
+  var accountant, autoclipperFactory, clipFactory, clipMarketing, clipPricer, clipSeller, clipWarehouse, computer, consoleAppender, cpu,
+    milestoneTracker, operationsStorage, projectTracker, trustWarehouse, wireMarket, wireSupplier;
 
   var pendingSave = false;
   var save = function() {
@@ -18,8 +19,13 @@
         clipPricer: clipPricer.serialize(),
         clipSeller: clipSeller.serialize(),
         clipWarehouse: clipWarehouse.serialize(),
+        computer: computer.serialize(),
         consoleAppender: consoleAppender.serialize(),
+        cpu: cpu.serialize(),
         milestoneTracker: milestoneTracker.serialize(),
+        operationsStorage: operationsStorage.serialize(),
+        projectTracker: projectTracker.serialize(),
+        trustWarehouse: trustWarehouse.serialize(),
         wireMarket: wireMarket.serialize(),
         wireSupplier: wireSupplier.serialize()
       }));
@@ -35,15 +41,26 @@
   (wireSupplier = wireSupplierFactory(savedGame.wireSupplier)).bind(save);
 
   // Level 1: Only level 0 dependencies
-  (clipMarketing = clipMarketingFactory(accountant, savedGame.clipMarketing)).bind(save);
   (clipFactory = clipFactoryFactory(wireSupplier, savedGame.clipFactory)).bind(save);
+  (clipMarketing = clipMarketingFactory(accountant, savedGame.clipMarketing)).bind(save);
   (wireMarket = wireMarketFactory(accountant, wireSupplier, savedGame.wireMarket)).bind(save);
 
   // Level 2: At least one level 1 dependency
   (autoclipperFactory = autoclipperFactoryFactory(accountant, clipFactory, consoleAppender, savedGame.autoclipperFactory)).bind(save);
   (clipWarehouse = clipWarehouseFactory(clipFactory, savedGame.clipWarehouse)).bind(save);
   (milestoneTracker = milestoneTrackerFactory(clipFactory, consoleAppender, savedGame.milestoneTracker)).bind(save);
+  (trustWarehouse = trustWarehouseFactory(clipFactory, savedGame.trustWarehouse)).bind(save);
 
   // Level 3 ...
   (clipSeller = clipSellerFactory(accountant, clipMarketing, clipPricer, clipWarehouse, savedGame.clipSeller)).bind(save);
+  (cpu = cpuFactory(consoleAppender, trustWarehouse, savedGame.cpu)).bind(save);
+
+  // Level 4 ...
+  (operationsStorage = operationsStorageFactory(cpu, savedGame.operationsStorage)).bind(save);
+
+  // Level 5 ...
+  (projectTracker = projectTrackerFactory(autoclipperFactory, clipSeller, consoleAppender, operationsStorage, wireSupplier, savedGame.projectTracker)).bind(save);
+
+  // Level 6 ...
+  (computer = computerFactory(consoleAppender, cpu, operationsStorage, projectTracker, trustWarehouse, savedGame.computer)).bind(save);
 })();

@@ -5,7 +5,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
   }
 
   if (!consoleAppender || !consoleAppender.append) {
-    console.assert(false, "No console appender connected to the milestone tracker.")
+    console.assert(false, "No console appender connected to the milestone tracker.");
     return;
   }
 
@@ -56,7 +56,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     if (seconds > 0 || message === "") message += seconds + " second" + (seconds > 1 ? "s" : "") + "..";
 
     return message.substring(0, message.length - 2);
-  }
+  };
 
   clipFactory.addClipsUpdatedCallback(function(clips) {
     var level = Milestones[_level];

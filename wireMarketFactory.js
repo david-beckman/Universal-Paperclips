@@ -64,7 +64,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   var syncAll = function() {
     syncButtonDisabledFlag();
     if (!_span) return;
-    _span.innerText = _dollars.toLocaleString(undefined, {style: "currency", currency: "USD"});
+    _span.innerText = _dollars.toLocaleString(undefined, {style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0});
   };
 
   return {

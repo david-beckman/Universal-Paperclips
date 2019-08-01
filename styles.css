@@ -35,6 +35,13 @@ body {
   }
 }
 
+.column {
+  display: inline-block;
+  vertical-align: top;
+  min-width: 20em;
+  width: 33%;
+}
+
 .group {
   margin-top: 1em;
   margin-bottom: 1em;
@@ -47,4 +54,32 @@ body {
 
 .sub-group {
   margin-bottom: 1em;
+}
+
+.cpu-button {
+  width: 7em;
+}
+
+.project-button {
+  background-color: lightgrey;
+  border: 1px solid black;
+  cursor: default;
+  font-size: 90%;
+  height: 4em;
+  margin-bottom: .5em;
+  padding: 1em;
+  text-align: center;
+}
+
+.project-button:hover {
+  border: 1px solid grey;
+}
+
+.project-button.disabled {
+  border: 1px solid lightgrey;;
+  color: grey;
+}
+
+.project-button .title {
+  font-weight: bold;
 }

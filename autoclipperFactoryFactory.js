@@ -16,6 +16,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
   const InitialEnabled = false;
   const InitialClippers = 0;
+  const IntialEffeciency = 1;
 
   const InitialPriceCents = 500;
   const PriceFactor = 100;
@@ -25,6 +26,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _clippers = (initial && initial.clippers) || InitialClippers;
+  var _efficiency = (initial && initial.efficiency) || IntialEffeciency;
   var _enabledUpdatedCallbacks = new Array();
   var _clippersUpdatedCallbacks = new Array();
 
@@ -37,14 +39,17 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   var _button;
   var _clippersSpan;
   var _dollarsSpan;
+
   var syncButtonDisabledFlag = function() {
     if (!_button) return;
     _button.disabled = !accountant.canDebitCents(getCents());
-  }
+  };
+
   var syncSpans = function() {
     if (_clippersSpan) _clippersSpan.innerText = _clippers.toLocaleString();
     if (_dollarsSpan) _dollarsSpan.innerText = (getCents() / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
-  }
+  };
+
   var incrementClippers = function() {
     if (!accountant.debitCents(getCents())) {
       console.warn("Insufficient funds to increment autoclippers.");
@@ -55,7 +60,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
     _clippersUpdatedCallbacks.forEach(function(callback) {
       setTimeout(callback(_clippers));
     });
-  }
+  };
 
   var appendSubgroup = function() {
     if (!_groupDiv) return;
@@ -105,13 +110,13 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   var remainder = 0;
   setInterval(function() {
     if (_clippers <= 0) return;
-    
-    var total = _clippers * MakeInterval + remainder;
+
+    var total = _clippers * _efficiency * MakeInterval + remainder;
     var toMake = Math.floor(total / TicksPerSecond);
     remainder = total - (toMake * TicksPerSecond);
     clipFactory.make(toMake);
   }, MakeInterval);
-  
+
   return {
     bind: function(save, manufacturingGroupDivId) {
       if (save) {
@@ -124,10 +129,20 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
       if (_enabled) appendSubgroup();
     },
+    enhance: function(percent) {
+      if (!percent || percent <= 0 || percent > 100 || percent !== Math.floor(percent)) {
+        console.assert(false, "Invalid percent to enhance autoclippers: " + percent);
+        return false;
+      }
+
+      _efficiency += percent / 100;
+      return true;
+    },
     serialize: function() {
       return {
         enabled: _enabled,
-        clippers: _clippers
+        clippers: _clippers,
+        efficiency: _efficiency
       };
     }
   };

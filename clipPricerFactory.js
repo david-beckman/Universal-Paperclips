@@ -45,7 +45,9 @@ var clipPricerFactory = function(initial) {
       if (callback) _centsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
-      return { cents: _cents };
+      return {
+        cents: _cents
+      };
     }
   };
 };

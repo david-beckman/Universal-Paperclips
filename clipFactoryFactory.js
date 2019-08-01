@@ -15,7 +15,7 @@ var clipFactoryFactory = function(wireSupplier, initial) {
 
   var _span;
   var _button;
-  
+
   var syncClipsSpan = function() {
     if (!_span) return;
     _span.innerText = _clips.toLocaleString();
@@ -81,7 +81,9 @@ var clipFactoryFactory = function(wireSupplier, initial) {
       if (callback) _clipsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
-      return { clips: _clips };
+      return {
+        clips: _clips
+      };
     }
   };
 };

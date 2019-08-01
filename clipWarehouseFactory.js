@@ -55,8 +55,19 @@ var clipWarehouseFactory = function(clipFactory, initial) {
 
       return true;
     },
+    addUnshippedUpdatedCallback: function(callback) {
+      if(!callback) return;
+
+      var wrapper = function() {
+        callback(getUnshipped());
+      };
+      _shippedUpdatedCallbacks.push(wrapper);
+      clipFactory.addClipsUpdatedCallback(wrapper);
+    },
     serialize: function() {
-      return { shipped: _shipped };
+      return {
+        shipped: _shipped
+      };
     }
   };
 };

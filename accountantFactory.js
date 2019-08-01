@@ -9,23 +9,23 @@ var accountantFactory = function(initial) {
 
   var getDollarsLocaleString = function() {
     return (_cents / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
-  }
+  };
 
   var syncSpan = function() {
     if (!_span) return;
     _span.innerText = getDollarsLocaleString();
-  }
+  };
 
   var getCents = function(dollars) {
     return dollars && dollars * 100;
-  }
+  };
 
   var isValidCents = function(cents, source) {
     if ((cents || cents === 0) && cents >= 0 && cents === Math.floor(cents)) return true;
 
     console.assert(false, "Amount in cents is invalid for a " + source + ": " + cents);
     return false;
-  }
+  };
 
   var canDebitCents = function(cents) {
     if (!isValidCents(cents, "credit")) return false;
