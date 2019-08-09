@@ -1,11 +1,16 @@
-var computerFactory = function(consoleAppender, cpu, operationsStorage, projectTracker, trustWarehouse, _) {
+var computerFactory = function(consoleAppender, cpu, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, _) {
   if (!consoleAppender || !consoleAppender.append) {
     console.assert(false, "No console appender connected to the computer.");
     return;
   }
 
-  if (!cpu || !cpu.bind || !cpu.enable) {
+  if (!cpu || !cpu.bind || !cpu.enable || !cpu.isEnabled) {
     console.assert(false, "No CPU connected to the computer.");
+    return;
+  }
+
+  if (!milestoneTracker || !milestoneTracker.getFibonacciClipTarget || !milestoneTracker.addFibonacciLevelUpdatedCallback || !milestoneTracker.incrementFibonacciLevel) {
+    console.assert(false, "No milestone tracker connected to the computer.");
     return;
   }
 
@@ -14,19 +19,23 @@ var computerFactory = function(consoleAppender, cpu, operationsStorage, projectT
     return;
   }
 
-  if (!projectTracker || !projectTracker.bind) {
+  if (!projectTracker || !projectTracker.bind || !projectTracker.addProjectVisibilityUpdatedCallback) {
     console.assert(false, "No project tracker connected to the computer.");
     return;
   }
 
-  if (!trustWarehouse || !trustWarehouse.bind || !trustWarehouse.addLevelUpdatedCallback) {
+  if (!trustWarehouse || !trustWarehouse.bind || !trustWarehouse.increaseTrust || !trustWarehouse.useTrust) {
     console.assert(false, "No trust warehouse connected to the computer.");
     return;
   }
 
-  const MinimumTrustLevel = 2;
-
   var _div;
+  var _productionSpan;
+
+  var syncSpan = function() {
+    if (!_productionSpan) return;
+    _productionSpan.innerText = milestoneTracker.getFibonacciClipTarget().toLocaleString();
+  };
 
   var create = function() {
     if (!_div) return;
@@ -41,8 +50,15 @@ var computerFactory = function(consoleAppender, cpu, operationsStorage, projectT
 
     var trustDiv = document.createElement("div");
     trustDiv.className = "sub-group";
-    trustWarehouse.bind(undefined, trustDiv);
     group.appendChild(trustDiv);
+
+    trustWarehouse.bind(undefined, trustDiv);
+
+    var productionGoalDiv = document.createElement("div");
+    productionGoalDiv.appendChild(document.createTextNode("+1 Trust at: "));
+    productionGoalDiv.appendChild(_productionSpan = document.createElement("span"));
+    productionGoalDiv.appendChild(document.createTextNode(" clips"));
+    trustDiv.appendChild(productionGoalDiv);
 
     var cpuDiv = document.createElement("div");
     cpuDiv.className = "sub-group";
@@ -55,16 +71,27 @@ var computerFactory = function(consoleAppender, cpu, operationsStorage, projectT
     group.appendChild(operationsDiv);
 
     projectTracker.bind(undefined, _div);
+
+    syncSpan();
   };
 
-  trustWarehouse.addLevelUpdatedCallback(function(level) {
-    if (level == MinimumTrustLevel) {
+  milestoneTracker.addFibonacciLevelUpdatedCallback(function() {
+    if (!cpu.isEnabled()) {
       consoleAppender.append("Trust-Constrained Self-Modification enabled");
       cpu.enable();
       create();
     } else {
       consoleAppender.append("Production target met: TRUST INCREASED, additional processor/memory capacity granted");
+      trustWarehouse.increaseTrust(1);
     }
+
+    syncSpan();
+  });
+
+  projectTracker.addProjectVisibilityUpdatedCallback(function() {
+    if (cpu.isEnabled()) return;
+    milestoneTracker.incrementFibonacciLevel();
+    // This will push to the other event triggering the enabling of the CPU.
   });
 
   return {
@@ -72,7 +99,7 @@ var computerFactory = function(consoleAppender, cpu, operationsStorage, projectT
       const DefaultSecondColumnDivId = "secondColumnDiv";
       _div = document.getElementById(secondColumnDivId || DefaultSecondColumnDivId);
 
-      if (trustWarehouse.getLevel() >= MinimumTrustLevel) create();
+      if (cpu.isEnabled()) create();
     },
     serialize: function() {}
   };

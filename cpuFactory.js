@@ -4,11 +4,13 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
     return;
   }
 
-  if (!trustWarehouse || !trustWarehouse.getLevel || !trustWarehouse.addLevelUpdatedCallback) {
+  if (!trustWarehouse || !trustWarehouse.getTrust || !trustWarehouse.addTrustUpdatedCallback) {
+    console.dir(trustWarehouse);
     console.assert(false, "No trust warehouse connected to the CPU.");
     return;
   }
 
+  const InitialEnabled = false;
   const InitialProcessors = 0;
   const InitialMemory = 0;
 
@@ -17,6 +19,7 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
 
   const MemoryFactor = 1000;
 
+  var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _processors = (initial && initial.processors) || InitialProcessors;
   var _memory = (initial && initial.memory) || InitialMemory;
 
@@ -29,7 +32,7 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
   var _memorySpan;
 
   var enabled = function() {
-    return trustWarehouse.getLevel() > (_processors + _memory);
+    return trustWarehouse.getTrust() > (_processors + _memory);
   };
 
   var syncButtonsDisabledFlags = function() {
@@ -44,7 +47,7 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
     syncButtonsDisabledFlags();
   };
 
-  trustWarehouse.addLevelUpdatedCallback(function() {
+  trustWarehouse.addTrustUpdatedCallback(function() {
     syncButtonsDisabledFlags();
   });
 
@@ -55,7 +58,11 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
     getMemory: function() {
       return MemoryFactor * _memory;
     },
+    isEnabled: function() {
+      return _enabled;
+    },
     enable: function() {
+      _enabled = true;
       _processors = StartingProcessors;
       _memory = StartingMemory;
 
@@ -128,6 +135,7 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
     },
     serialize: function() {
       return {
+        enabled: _enabled,
         processors: _processors,
         memory: _memory
       };

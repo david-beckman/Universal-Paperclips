@@ -38,6 +38,7 @@
   (accountant = accountantFactory(savedGame.accountant)).bind(save);
   (clipPricer = clipPricerFactory(savedGame.clipPricer)).bind(save);
   (consoleAppender = consoleAppenderFactory(savedGame.consoleAppender)).bind(save);
+  (trustWarehouse = trustWarehouseFactory(savedGame.trustWarehouse)).bind(save);
   (wireSupplier = wireSupplierFactory(savedGame.wireSupplier)).bind(save);
 
   // Level 1: Only level 0 dependencies
@@ -49,7 +50,6 @@
   (autoclipperFactory = autoclipperFactoryFactory(accountant, clipFactory, consoleAppender, savedGame.autoclipperFactory)).bind(save);
   (clipWarehouse = clipWarehouseFactory(clipFactory, savedGame.clipWarehouse)).bind(save);
   (milestoneTracker = milestoneTrackerFactory(clipFactory, consoleAppender, savedGame.milestoneTracker)).bind(save);
-  (trustWarehouse = trustWarehouseFactory(clipFactory, savedGame.trustWarehouse)).bind(save);
 
   // Level 3 ...
   (clipSeller = clipSellerFactory(accountant, clipMarketing, clipPricer, clipWarehouse, savedGame.clipSeller)).bind(save);
@@ -59,8 +59,8 @@
   (operationsStorage = operationsStorageFactory(cpu, savedGame.operationsStorage)).bind(save);
 
   // Level 5 ...
-  (projectTracker = projectTrackerFactory(autoclipperFactory, clipSeller, consoleAppender, operationsStorage, wireSupplier, savedGame.projectTracker)).bind(save);
+  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, operationsStorage, trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker)).bind(save);
 
   // Level 6 ...
-  (computer = computerFactory(consoleAppender, cpu, operationsStorage, projectTracker, trustWarehouse, savedGame.computer)).bind(save);
+  (computer = computerFactory(consoleAppender, cpu, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, savedGame.computer)).bind(save);
 })();

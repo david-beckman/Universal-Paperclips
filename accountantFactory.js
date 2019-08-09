@@ -50,6 +50,9 @@ var accountantFactory = function(initial) {
   };
 
   return {
+    getCents: function() {
+      return _cents;
+    },
     bind: function(save, availableDollarsSpanId) {
       if (save) _centsUpdatedCallbacks.push(save);
 

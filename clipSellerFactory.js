@@ -9,7 +9,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
     return false;
   }
 
-  if (!clipPricer || !clipPricer.getPriceCents || !clipPricer.addPriceCentsUpdatedCallback) {
+  if (!clipPricer || !clipPricer.getCents || !clipPricer.addCentsUpdatedCallback) {
     console.assert(false, "No pricer hooked to the seller.");
     return false;
   }
@@ -36,7 +36,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
 
   var getDemandPercent = function() {
     var marketingBoost = Math.pow(MarketingPower, clipMarketing.getLevel() - 1);
-    var pricingBoost = PricingFactor / clipPricer.getPriceCents();
+    var pricingBoost = PricingFactor / clipPricer.getCents();
     return marketingBoost * pricingBoost;
   };
 
@@ -51,7 +51,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   var syncRevTracker = function() {
     var idealCPS = getIdealCPS();
     if (_cspsSpan) _cspsSpan.innerText = idealCPS.toLocaleString();
-    if (_rpsSpan) _rpsSpan.innerText = (idealCPS * clipPricer.getPriceCents() / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
+    if (_rpsSpan) _rpsSpan.innerText = (idealCPS * clipPricer.getCents() / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
   };
 
   var syncSpans = function() {
@@ -60,7 +60,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
     syncRevTracker();
   };
 
-  clipPricer.addPriceCentsUpdatedCallback(function() {
+  clipPricer.addCentsUpdatedCallback(function() {
     syncSpans();
   });
 
@@ -109,8 +109,8 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
         return false;
     }
 
-    if (!accountant.creditCents(toShip * clipPricer.getPriceCents())) {
-        console.warn("Could not credit account from shipped clips.")
+    if (!accountant.creditCents(toShip * clipPricer.getCents())) {
+        console.warn("Could not credit account from shipped clips.");
         return false;
     }
 

@@ -9,14 +9,18 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     return;
   }
 
-  const InitialLevel = 0;
+  const InitialLogLevel = 0;
+  const InitialFibonacciLevel = 2;
   const InitialTicks = 0;
-  const Milestones = [
+
+  const FibonacciFactor = 1000;
+  const LogMilestones = [
     { value: 5e2 }, // 500
     { value: 1e3 }, // 1,000
     { value: 1e4 }, // 10,000
     { value: 1e5 }, // 100,000
     { value: 1e6 }, // 1,000,000 - One Million
+    // {value: 1e9, display: "One Billion"},
     { value: 1e12, display: "One Trillion"},
     { value: 1e15, display: "One Quadrillion"},
     { value: 1e18, display: "One Quintillion"},
@@ -25,10 +29,14 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     { value: 1e27, display: "One Octillion"}
   ];
 
-  var _level = (initial && initial.level) || InitialLevel;
-  var _levelUpdatedCallbacks = new Array();
+  var _logLevel = (initial && initial.logLevel) || InitialLogLevel;
+  var _fibonacciLevel = (initial && initial.fibonacciLevel) || InitialFibonacciLevel;
+  var _logLevelUpdatedCallbacks = new Array();
+  var _fibonacciLevelUpdatedCallbacks = new Array();
   var _startTime = new Date();
   var _ticks = (initial && initial.ticks) || InitialTicks;
+
+  var _fibonacci = [1, 1, 2, 3];
 
   var getTicks = function() {
     return new Date() - _startTime + _ticks;
@@ -58,25 +66,59 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     return message.substring(0, message.length - 2);
   };
 
-  clipFactory.addClipsUpdatedCallback(function(clips) {
-    var level = Milestones[_level];
+  var checkLogLevel = function(clips) {
+    var level = LogMilestones[_logLevel];
     if (clips < level.value) return;
 
     consoleAppender.append((level.display || level.value.toLocaleString()) + " clips created in " + durationToLocaleString());
 
-    _level++;
-    _levelUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_level); }, 0);
+    _logLevel++;
+    _logLevelUpdatedCallbacks.forEach(function(callback) {
+      setTimeout(function() { callback(_logLevel); }, 0);
     });
+  };
+
+  var getFibonacciClipTarget = function() {
+    while (_fibonacci.length <= (_fibonacciLevel)) {
+      _fibonacci[_fibonacci.length] = _fibonacci[_fibonacci.length - 1] + _fibonacci[_fibonacci.length - 2];
+    }
+
+    return _fibonacci[_fibonacciLevel] * FibonacciFactor;
+  };
+
+  var incrementFibonacciLevel = function() {
+    _fibonacciLevel++;
+    _fibonacciLevelUpdatedCallbacks.forEach(function(callback) {
+      setTimeout(function() { callback(_fibonacciLevel); }, 0);
+    });
+  };
+
+  var checkFibonacciLevel = function(clips) {
+    if (clips < getFibonacciClipTarget()) return;
+    incrementFibonacciLevel();
+  };
+
+  clipFactory.addClipsUpdatedCallback(function(clips) {
+    checkLogLevel(clips);
+    checkFibonacciLevel(clips);
   });
 
   return {
     bind: function(save) {
-      if (save) _levelUpdatedCallbacks.push(save);
+      if (save) {
+        _logLevelUpdatedCallbacks.push(save);
+        _fibonacciLevelUpdatedCallbacks.push(save);
+      }
     },
+    incrementFibonacciLevel: incrementFibonacciLevel,
+    addFibonacciLevelUpdatedCallback: function(callback) {
+      if (callback) _fibonacciLevelUpdatedCallbacks.push(callback);
+    },
+    getFibonacciClipTarget: getFibonacciClipTarget,
     serialize: function() {
       return {
-        level: _level,
+        logLevel: _logLevel,
+        fibonacciLevel: _fibonacciLevel,
         ticks: getTicks()
       };
     }

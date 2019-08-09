@@ -10,7 +10,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   }
 
   if (!consoleAppender || !consoleAppender.append) {
-    console.assert(false, "No console appender connected to the factory.")
+    console.assert(false, "No console appender connected to the factory.");
     return;
   }
 
@@ -18,7 +18,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   const InitialClippers = 0;
   const IntialEffeciency = 1;
 
-  const InitialPriceCents = 500;
+  const InitialCents = 500;
   const PriceFactor = 100;
   const PricePower = 1.1;
   const TicksPerSecond = 1000;
@@ -31,8 +31,8 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   var _clippersUpdatedCallbacks = new Array();
 
   var getCents = function() {
-    if (_clippers == InitialClippers) return InitialPriceCents;
-    return InitialPriceCents + Math.round(PriceFactor * Math.pow(PricePower, _clippers));
+    if (_clippers == InitialClippers) return InitialCents;
+    return InitialCents + Math.round(PriceFactor * Math.pow(PricePower, _clippers));
   };
 
   var _groupDiv;
@@ -129,6 +129,9 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
       if (_enabled) appendSubgroup();
     },
+    getClippers: function() {
+      return _clippers;
+    },
     enhance: function(percent) {
       if (!percent || percent <= 0 || percent > 100 || percent !== Math.floor(percent)) {
         console.assert(false, "Invalid percent to enhance autoclippers: " + percent);
@@ -144,6 +147,9 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
         clippers: _clippers,
         efficiency: _efficiency
       };
+    },
+    addClippersUpdatedCallback: function(callback) {
+      if (callback) _clippersUpdatedCallbacks.push(callback);
     }
   };
 };

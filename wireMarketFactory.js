@@ -14,6 +14,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   const InitialDollars = 20;
   const InitialBaseDollars = 20;
   const InitialMarketCounter = 0;
+  const InitialPurchases = 0;
 
   const MinimumBaseDollars = 15;
   const PriceReductionInterval = 25000;
@@ -24,6 +25,9 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   const DollarsIncreaseAmount = .05;
 
   var _dollars = (initial && initial.dollars) || InitialDollars;
+  var _dollarsUpdatedCallbacks = new Array();
+  var _purchases = (initial && initial.purchases) || InitialPurchases;
+  var _purchasesUpdatedCallbacks = new Array();
   var _baseDollars = (initial && initial.baseDollars) || InitialBaseDollars;
   var _marketCounter = (initial && initial.marketCounter) || InitialMarketCounter;
 
@@ -50,6 +54,9 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
 
     if (newDollars === _dollars) return;
     _dollars = newDollars;
+    _dollarsUpdatedCallbacks.forEach(function(callback) {
+      setTimeout(function() { callback(_dollars); }, 0);
+    });
     syncAll();
   }, AdjustPriceInterval);
 
@@ -68,6 +75,12 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   };
 
   return {
+    getDollars: function() {
+      return _dollars;
+    },
+    getPurchases: function() {
+      return _purchases;
+    },
     bind: function(_, buyWireSpoolButtonId, wireSpoolPriceDollarsSpanId) {
       const DefaultBuyWireSpoolButtonId = "buyWireSpoolButton";
       const DefaultWireSpoolPriceDollarsSpanId = "wireSpoolPriceDollarsSpan";
@@ -82,6 +95,10 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
           return false;
         }
 
+        _purchases++;
+        _purchasesUpdatedCallbacks.forEach(function(callback) {
+          setTimeout(function() { callback(_purchases); }, 0);
+        });
         wireSupplier.addSpool();
 
         _baseDollars += DollarsIncreaseAmount;
@@ -95,8 +112,15 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
         baseDollars: _baseDollars,
         dollars: _dollars,
         marketCounter: _marketCounter,
-        nextReductionTimeout: _nextReductionTimestamp - new Date().getTime()
+        nextReductionTimeout: _nextReductionTimestamp - new Date().getTime(),
+        purchases: _purchases
       };
+    },
+    addDollarsUpdatedCallback: function(callback) {
+      if (callback) _dollarsUpdatedCallbacks.push(callback);
+    },
+    addPurchasesUpdatedCallback: function(callback) {
+      if (callback) _purchasesUpdatedCallbacks.push(callback);
     }
   };
 };

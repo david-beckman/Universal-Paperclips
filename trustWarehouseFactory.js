@@ -1,72 +1,67 @@
-var trustWarehouseFactory = function(clipFactory, initial) {
-  if (!clipFactory || !clipFactory.addClipsUpdatedCallback) {
-    console.assert(false, "No factory connected to the trust warehouse.");
-    return;
-  }
+var trustWarehouseFactory = function(initial) {
+  const InitialTrust = 2;
 
-  const InitialLevel = 1;
+  var _trust = (initial && initial.trust) || InitialTrust;
+  var _trustUpdatedCallbacks = new Array();
 
-  const ClipFactor = 1000;
+  var _span;
 
-  var _fibonacci = [1, 2, 3];
-  var _levelUpdatedCallbacks = new Array();
-  var _level = (initial && initial.level) || InitialLevel;
-
-  var _trustSpan;
-  var _productionSpan;
-
-  var getProductionGoal = function() {
-    while (_fibonacci.length <= (_level)) {
-      _fibonacci[_fibonacci.length] = _fibonacci[_fibonacci.length - 1] + _fibonacci[_fibonacci.length - 2];
-    }
-
-    return ClipFactor * _fibonacci[_level];
+  var syncSpan = function() {
+    if (_span) _span.innerText = _trust.toLocaleString();
   };
 
-  var syncSpans = function() {
-    if (_trustSpan) _trustSpan.innerText = _level.toLocaleString();
-    if (_productionSpan) _productionSpan.innerText = getProductionGoal().toLocaleString();
+  var isValid = function(amount) {
+    if (amount && amount > 0 && amount === Math.floor(amount)) return true;
+
+    console.assert(false, "Trust amount is invalid: " + amount);
+    return false;
   };
-
-  clipFactory.addClipsUpdatedCallback(function(clips) {
-    if (clips < getProductionGoal()) return;
-
-    _level++;
-    syncSpans();
-    _levelUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_level); }, 0);
-    });
-  });
 
   return {
-    getLevel() {
-      return _level;
+    getTrust() {
+      return _trust;
+    },
+    increaseTrust(amount) {
+      if (!isValid(amount)) return false;
+
+      _trust += amount;
+      _trustUpdatedCallbacks.forEach(function(callback) {
+        setTimeout(function() { callback(_trust); }, 0);
+      });
+      syncSpan();
+
+      return true;
+    },
+    useTrust(amount) {
+      if (!isValid(amount)) return false;
+
+      _trust -= amount;
+      _trustUpdatedCallbacks.forEach(function(callback) {
+        setTimeout(function() { callback(_trust); }, 0);
+      });
+      syncSpan();
+
+      return true;
     },
     bind: function(save, subgroupDiv) {
-      if (save) _levelUpdatedCallbacks.push(save);
+      if (save) _trustUpdatedCallbacks.push(save);
 
       if (!subgroupDiv) return;
 
       var trustDiv = document.createElement("div");
       trustDiv.appendChild(document.createTextNode("Trust: "));
-      trustDiv.appendChild(_trustSpan = document.createElement("span"));
+      trustDiv.appendChild(_span = document.createElement("span"));
       subgroupDiv.appendChild(trustDiv);
 
-      var productionGoalDiv = document.createElement("div");
-      productionGoalDiv.appendChild(document.createTextNode("+1 Trust at: "));
-      productionGoalDiv.appendChild(_productionSpan = document.createElement("span"));
-      productionGoalDiv.appendChild(document.createTextNode(" clips"));
-      subgroupDiv.appendChild(productionGoalDiv);
-
-      syncSpans();
+      syncSpan();
     },
     serialize: function() {
       return {
-        level: _level
+        trust: _trust
       };
     },
-    addLevelUpdatedCallback: function(callback) {
-      if (callback) _levelUpdatedCallbacks.push(callback);
+    addTrustUpdatedCallback: function(callback) {
+      if (callback) _trustUpdatedCallbacks.push(callback);
     }
   };
 };

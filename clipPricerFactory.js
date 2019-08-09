@@ -5,18 +5,18 @@ var clipPricerFactory = function(initial) {
   var _centsUpdatedCallbacks = new Array();
 
   return {
-    getPriceCents: function() {
+    getCents: function() {
       return _cents;
     },
-    bind: function(save, decrementClipPriceCentsButtonId, incrementClipPriceCentsButtonId, clipPriceDollarsSpanId) {
+    bind: function(save, decrementClipCentsButtonId, incrementClipCentsButtonId, clipPriceDollarsSpanId) {
       if (save) _centsUpdatedCallbacks.push(save);
 
-      const DefaultDecrementClipPriceCentsButtonId = "decrementClipPriceCentsButton";
-      const DefaultIncrementClipPriceCentsButtonId = "incrementClipPriceCentsButton";
+      const DefaultDecrementClipCentsButtonId = "decrementClipCentsButton";
+      const DefaultIncrementClipCentsButtonId = "incrementClipCentsButton";
       const DefaultClipPriceDollarsSpanId = "clipPriceDollarsSpan";
 
-      var decrementButton = document.getElementById(decrementClipPriceCentsButtonId || DefaultDecrementClipPriceCentsButtonId);
-      var incrementButton = document.getElementById(incrementClipPriceCentsButtonId || DefaultIncrementClipPriceCentsButtonId);
+      var decrementButton = document.getElementById(decrementClipCentsButtonId || DefaultDecrementClipCentsButtonId);
+      var incrementButton = document.getElementById(incrementClipCentsButtonId || DefaultIncrementClipCentsButtonId);
       var span = document.getElementById(clipPriceDollarsSpanId || DefaultClipPriceDollarsSpanId);
 
       var syncAll;
@@ -41,7 +41,7 @@ var clipPricerFactory = function(initial) {
         syncAll(true);
       };
     },
-    addPriceCentsUpdatedCallback: function(callback) {
+    addCentsUpdatedCallback: function(callback) {
       if (callback) _centsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
