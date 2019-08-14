@@ -1,5 +1,5 @@
 var operationsStorageFactory = function(cpu, initial) {
-  if (!cpu || !cpu.getMemory || !cpu.getProcessors || !cpu.addMemoryUpdateCallback) {
+  if (!cpu || !cpu.getMemory || !cpu.getProcessors || !cpu.addMemoryUpdatedCallback) {
     console.assert(false, "No CPU connected to the operations storage.");
     return false;
   }
@@ -31,7 +31,7 @@ var operationsStorageFactory = function(cpu, initial) {
     syncMaxSpan();
   };
 
-  cpu.addMemoryUpdateCallback(function(memory) {
+  cpu.addMemoryUpdatedCallback(function(memory) {
     syncMaxSpan();
   });
 
@@ -42,9 +42,13 @@ var operationsStorageFactory = function(cpu, initial) {
     return false;
   }
 
+  var isAtMax = function() {
+    return cpu.getMemory() <= _operations;
+  };
+
   var remainder = 0;
   setInterval(function() {
-    if (cpu.getMemory() <= _operations) return;
+    if (isAtMax()) return;
 
     var total = cpu.getProcessors() * OpsPerProcPerSec * OperationsInterval + remainder;
     var ops = Math.floor(total / TicksPerSecond);
@@ -57,6 +61,7 @@ var operationsStorageFactory = function(cpu, initial) {
   }, OperationsInterval);
 
   return {
+    isAtMax: isAtMax,
     canConsume: function(amount) {
       return isValidAmount(amount) && amount <= _operations;
     },

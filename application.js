@@ -2,7 +2,7 @@
   const SaveName = "UniversalPaperclips";
 
   var accountant, autoclipperFactory, clipFactory, clipMarketing, clipPricer, clipSeller, clipWarehouse, computer, consoleAppender, cpu,
-    milestoneTracker, operationsStorage, projectTracker, trustWarehouse, wireMarket, wireSupplier;
+    creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, wireMarket, wireSupplier;
 
   var pendingSave = false;
   var save = function() {
@@ -22,6 +22,7 @@
         computer: computer.serialize(),
         consoleAppender: consoleAppender.serialize(),
         cpu: cpu.serialize(),
+        creativityStorage: creativityStorage.serialize(),
         milestoneTracker: milestoneTracker.serialize(),
         operationsStorage: operationsStorage.serialize(),
         projectTracker: projectTracker.serialize(),
@@ -53,14 +54,17 @@
 
   // Level 3 ...
   (clipSeller = clipSellerFactory(accountant, clipMarketing, clipPricer, clipWarehouse, savedGame.clipSeller)).bind(save);
-  (cpu = cpuFactory(consoleAppender, trustWarehouse, savedGame.cpu)).bind(save);
+  (cpu = cpuFactory(trustWarehouse, savedGame.cpu)).bind(save);
 
   // Level 4 ...
   (operationsStorage = operationsStorageFactory(cpu, savedGame.operationsStorage)).bind(save);
 
   // Level 5 ...
-  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, operationsStorage, trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker)).bind(save);
+  (creativityStorage = creativityStorageFactory(cpu, operationsStorage, savedGame.creativityStorage)).bind(save);
 
   // Level 6 ...
-  (computer = computerFactory(consoleAppender, cpu, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, savedGame.computer)).bind(save);
+  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, creativityStorage, operationsStorage, trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker)).bind(save);
+
+  // Level 7 ...
+  (computer = computerFactory(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, savedGame.computer)).bind(save);
 })();

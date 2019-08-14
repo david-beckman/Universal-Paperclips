@@ -1,11 +1,16 @@
-var computerFactory = function(consoleAppender, cpu, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, _) {
+var computerFactory = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, _) {
   if (!consoleAppender || !consoleAppender.append) {
     console.assert(false, "No console appender connected to the computer.");
     return;
   }
 
-  if (!cpu || !cpu.bind || !cpu.enable || !cpu.isEnabled) {
+  if (!cpu || !cpu.bind || !cpu.enable || !cpu.isEnabled || !cpu.addMemoryUpdatedCallback || !cpu.addProcessorsUpdatedCallback) {
     console.assert(false, "No CPU connected to the computer.");
+    return;
+  }
+
+  if (!creativityStorage || !creativityStorage.bind || !creativityStorage.isEnabled) {
+    console.assert(false, "No creativity storage connected to the computer.");
     return;
   }
 
@@ -68,6 +73,7 @@ var computerFactory = function(consoleAppender, cpu, milestoneTracker, operation
     var operationsDiv = document.createElement("div");
     operationsDiv.className = "sub-group";
     operationsStorage.bind(undefined, operationsDiv);
+    creativityStorage.bind(undefined, operationsDiv);
     group.appendChild(operationsDiv);
 
     projectTracker.bind(undefined, _div);
@@ -75,9 +81,12 @@ var computerFactory = function(consoleAppender, cpu, milestoneTracker, operation
     syncSpan();
   };
 
+  // TODO: This is a bit of a hack - not sure what it should look like...
+  var enabling = false;
   milestoneTracker.addFibonacciLevelUpdatedCallback(function() {
     if (!cpu.isEnabled()) {
       consoleAppender.append("Trust-Constrained Self-Modification enabled");
+      enabling = true;
       cpu.enable();
       create();
     } else {
@@ -92,6 +101,30 @@ var computerFactory = function(consoleAppender, cpu, milestoneTracker, operation
     if (cpu.isEnabled()) return;
     milestoneTracker.incrementFibonacciLevel();
     // This will push to the other event triggering the enabling of the CPU.
+  });
+
+  cpu.addProcessorsUpdatedCallback(function(processors) {
+    if (processors <= 0) return;
+
+    if (enabling) {
+      setTimeout(function() {enabling = false;}, 0);
+      return;
+    }
+
+    consoleAppender.append(creativityStorage.isEnabled() ?
+      "Processor added, operations (or creativity) per sec increased" :
+      "Processor added, operations per sec increased");
+  });
+
+  cpu.addMemoryUpdatedCallback(function(memory) {
+    if (memory <= 0) return;
+
+    if (enabling) {
+      setTimeout(function() {enabling = false;}, 0);
+      return;
+    }
+
+    consoleAppender.append("Memory added, max operations increased");
   });
 
   return {

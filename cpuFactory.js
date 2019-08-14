@@ -1,9 +1,4 @@
-var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
-  if (!consoleAppender || !consoleAppender.append) {
-    console.assert(false, "No console appender connected to the CPU.");
-    return;
-  }
-
+var cpuFactory = function(trustWarehouse, initial) {
   if (!trustWarehouse || !trustWarehouse.getTrust || !trustWarehouse.addTrustUpdatedCallback) {
     console.dir(trustWarehouse);
     console.assert(false, "No trust warehouse connected to the CPU.");
@@ -94,7 +89,6 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
         }
 
         _processors++;
-        consoleAppender.append("Processor added, operations (or creativity) per sec increased");
         syncAll();
         _processorsUpdatedCallbacks.forEach(function(callback) {
           setTimeout(function() { callback(_processors); }, 0);
@@ -117,7 +111,6 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
         }
 
         _memory++;
-        consoleAppender.append("Memory added, max operations increased");
         syncAll();
         _memoryUpdatedCallbacks.forEach(function(callback) {
           setTimeout(function() { callback(_memory); }, 0);
@@ -130,8 +123,11 @@ var cpuFactory = function(consoleAppender, trustWarehouse, initial) {
 
       syncAll();
     },
-    addMemoryUpdateCallback: function(callback) {
+    addMemoryUpdatedCallback: function(callback) {
       if (callback) _memoryUpdatedCallbacks.push(callback);
+    },
+    addProcessorsUpdatedCallback: function(callback) {
+      if (callback) _processorsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

@@ -1,4 +1,4 @@
-var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
+var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, creativityStorage, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
   if (!accountant || !accountant.getCents || !accountant.addCentsUpdatedCallback) {
     console.assert(false, "No accountant connected to the project tracker.");
     return;
@@ -29,6 +29,11 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     return;
   }
 
+  if (!creativityStorage || !creativityStorage.enable) {
+    console.assert(false, "No creativity storage connected to the project tracker.");
+    return;
+  }
+
   if (!operationsStorage || !operationsStorage.canConsume || !operationsStorage.consume || !operationsStorage.addOperationsUpdatedCallback) {
     console.assert(false, "No operations storage connected to the project tracker.");
     return;
@@ -50,17 +55,6 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }
 
   const ProjectList = [{
-    title: "Improved AutoClippers",
-    description: "Increases AutoClipper performance 25%",
-    cost: { operations: 750 },
-    isVisible: function() {
-      return cpu.isEnabled() && autoclipperFactory.getClippers() > 0;
-    },
-    trigger: function() {
-      autoclipperFactory.enhance(25);
-      consoleAppender.append("AutoClippper performance boosted by 25%");
-    }
-  }, {
     title: "Beg for More Wire",
     description: "Admit failure, ask for budget increase to cover cost of 1 spool",
     cost: { trust: 1 },
@@ -74,6 +68,28 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
       consoleAppender.append("Budget overage approved, 1 spool of wire requisitioned from HQ");
     },
     disableAppliedTracking: true
+  }, {
+    title: "Creativity",
+    description: "Use idle operations to generate new problems and new solutions",
+    cost: { operations: 1000 },
+    isVisible: function() {
+      return cpu.isEnabled() && operationsStorage.isAtMax();
+    },
+    trigger: function() {
+      creativityStorage.enable();
+      consoleAppender.append("Creativity unlocked (creativity increases while operations are at max)");
+    }
+  }, {
+    title: "Improved AutoClippers",
+    description: "Increases AutoClipper performance 25%",
+    cost: { operations: 750 },
+    isVisible: function() {
+      return cpu.isEnabled() && autoclipperFactory.getClippers() > 0;
+    },
+    trigger: function() {
+      autoclipperFactory.enhance(25);
+      consoleAppender.append("AutoClippper performance boosted by 25%");
+    }
   }, {
     title: "Improved Wire Extrusion",
     description: "50% more wire supply from every spool",
@@ -132,10 +148,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
         }
 
         project.trigger();
-        if (!project.disableAppliedTracking) {
-          _projectApplied[index] = true;
-          console.assert(false, index);
-        }
+        _projectApplied[index] = !project.disableAppliedTracking;
         _projectVisible[index] = false;
         _groupDiv.removeChild(_projectButtons[index]);
         _projectButtons[index] = undefined;
@@ -216,6 +229,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   clipWarehouse.addUnshippedUpdatedCallback(syncVisibility);
   wireMarket.addPurchasesUpdatedCallback(syncVisibility);
   wireSupplier.addLengthUpdatedCallback(syncVisibility);
+  operationsStorage.addOperationsUpdatedCallback(syncVisibility);
 
   operationsStorage.addOperationsUpdatedCallback(syncEnabled);
 
