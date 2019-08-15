@@ -8,16 +8,16 @@ var clipPricerFactory = function(initial) {
     getCents: function() {
       return _cents;
     },
-    bind: function(save, decrementClipCentsButtonId, incrementClipCentsButtonId, clipPriceDollarsSpanId) {
+    bind: function(save, decrementClipCentsButtonId, incrementClipCentsButtonId, clipDollarsSpanId) {
       if (save) _centsUpdatedCallbacks.push(save);
 
       const DefaultDecrementClipCentsButtonId = "decrementClipCentsButton";
       const DefaultIncrementClipCentsButtonId = "incrementClipCentsButton";
-      const DefaultClipPriceDollarsSpanId = "clipPriceDollarsSpan";
+      const DefaultClipDollarsSpanId = "clipDollarsSpan";
 
       var decrementButton = document.getElementById(decrementClipCentsButtonId || DefaultDecrementClipCentsButtonId);
       var incrementButton = document.getElementById(incrementClipCentsButtonId || DefaultIncrementClipCentsButtonId);
-      var span = document.getElementById(clipPriceDollarsSpanId || DefaultClipPriceDollarsSpanId);
+      var span = document.getElementById(clipDollarsSpanId || DefaultClipDollarsSpanId);
 
       var syncAll;
       (syncAll = function(includeCallbacks) {

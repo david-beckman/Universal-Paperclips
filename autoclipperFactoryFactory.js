@@ -29,6 +29,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   var _efficiency = (initial && initial.efficiency) || IntialEffeciency;
   var _enabledUpdatedCallbacks = new Array();
   var _clippersUpdatedCallbacks = new Array();
+  var _efficiencyUpdatedCallbacks = new Array();
 
   var getCents = function() {
     if (_clippers == InitialClippers) return InitialCents;
@@ -74,6 +75,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
     _button = document.createElement("input");
     _button.type = "button";
+    _button.id = "createClipperButton";
     _button.value = "AutoClippers";
     _button.onclick = incrementClippers;
     syncButtonDisabledFlag();
@@ -87,6 +89,7 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
     costLine.appendChild(document.createTextNode("Cost: "));
     costLine.appendChild(_dollarsSpan = document.createElement("span"));
+    _dollarsSpan.id = "clipperDollarsSpan";
 
     syncSpans();
   };
@@ -132,13 +135,20 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
     getClippers: function() {
       return _clippers;
     },
+    getEfficiency: function() {
+      return _efficiency;
+    },
     enhance: function(percent) {
-      if (!percent || percent <= 0 || percent > 100 || percent !== Math.floor(percent)) {
+      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
         console.assert(false, "Invalid percent to enhance autoclippers: " + percent);
         return false;
       }
 
       _efficiency += percent / 100;
+      _efficiencyUpdatedCallbacks.forEach(function(callback) {
+        setTimeout(function() { callback (_efficiency); }, 0);
+      });
+
       return true;
     },
     serialize: function() {
@@ -150,6 +160,9 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
     },
     addClippersUpdatedCallback: function(callback) {
       if (callback) _clippersUpdatedCallbacks.push(callback);
+    },
+    addEfficiencyUpdatedCallback: function(callback) {
+      if (callback) _efficiencyUpdatedCallbacks.push(callback);
     }
   };
 };

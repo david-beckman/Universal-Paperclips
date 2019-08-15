@@ -135,6 +135,18 @@ var cpuFactory = function(trustWarehouse, initial) {
         processors: _processors,
         memory: _memory
       };
+    },
+    clear: function() {
+      _processors = 0;
+      _memory = 0;
+
+      syncAll();
+      _memoryUpdatedCallbacks.forEach(function(callback) {
+        setTimeout(function() { callback(_memory); }, 0);
+      });
+      _processorsUpdatedCallbacks.forEach(function(callback) {
+        setTimeout(function() { callback(_processors); }, 0);
+      });
     }
   };
 };

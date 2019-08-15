@@ -7,20 +7,20 @@ var clipMarketingFactory = function(accountant, initial) {
 
   const InitialLevel = 1;
 
-  const BasePriceDollars = 100;
+  const BaseDollars = 100;
   const IncrementPower = 2;
 
   var _level = (initial && initial.level) || InitialLevel;
   var _levelUpdatedCallbacks = new Array();
 
-  var getPriceDollars = function() {
-    return BasePriceDollars * Math.pow(IncrementPower, _level - 1);
+  var getDollars = function() {
+    return BaseDollars * Math.pow(IncrementPower, _level - 1);
   };
 
   var _incrementLevelButton;
   var syncIncrementButtonDisabledFlag = function(){
     if (!_incrementLevelButton) return;
-    _incrementLevelButton.disabled = !accountant.canDebitDollars(getPriceDollars());
+    _incrementLevelButton.disabled = !accountant.canDebitDollars(getDollars());
   };
 
   accountant.addCentsUpdatedCallback(function() {
@@ -31,26 +31,26 @@ var clipMarketingFactory = function(accountant, initial) {
     getLevel: function() {
       return _level;
     },
-    bind: function(save, incrementMarketingLevelButtonId, marketingLevelSpanId, marketingLevelPriceDollarsSpanId) {
+    bind: function(save, incrementMarketingLevelButtonId, marketingLevelSpanId, marketingLevelDollarsSpanId) {
       if (save) _levelUpdatedCallbacks.push(save);
 
       const DefaultIncrementMarketingLevelButtonId = "incrementMarketingLevelButton";
       const DefaultmarketingLevelSpanId = "marketingLevelSpan";
-      const DefaultMarketingLevelPriceDollarsSpanId = "marketingLevelPriceDollarsSpan";
+      const DefaultMarketingLevelDollarsSpanId = "marketingLevelDollarsSpan";
 
       _incrementLevelButton = document.getElementById(incrementMarketingLevelButtonId || DefaultIncrementMarketingLevelButtonId);
       var levelSpan = document.getElementById(marketingLevelSpanId || DefaultmarketingLevelSpanId);
-      var priceDollarsSpan = document.getElementById(marketingLevelPriceDollarsSpanId || DefaultMarketingLevelPriceDollarsSpanId);
+      var dollarsSpan = document.getElementById(marketingLevelDollarsSpanId || DefaultMarketingLevelDollarsSpanId);
 
       var syncAll;
       (syncAll = function() {
         syncIncrementButtonDisabledFlag();
         levelSpan.innerText = _level.toLocaleString();
-        priceDollarsSpan.innerText = getPriceDollars().toLocaleString(undefined, {style: "currency", currency: "USD"});
+        dollarsSpan.innerText = getDollars().toLocaleString(undefined, {style: "currency", currency: "USD"});
       })();
 
       _incrementLevelButton.onclick = function() {
-        if (!accountant.debitDollars(getPriceDollars())) {
+        if (!accountant.debitDollars(getDollars())) {
           console.assert(false, "Insufficient funds to increase the marketing level.");
           return false;
         }

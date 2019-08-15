@@ -26,7 +26,7 @@ var wireSupplierFactory = function(initial) {
       return _spoolLength;
     },
     increaseSpoolLength: function(percent) {
-      if (!percent || percent <= 0 || percent > 100 || percent !== Math.floor(percent)) {
+      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
         console.assert(false, "Invalid percent to enhance spool length: " + percent);
         return false;
       }

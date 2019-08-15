@@ -81,12 +81,12 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
     getPurchases: function() {
       return _purchases;
     },
-    bind: function(_, buyWireSpoolButtonId, wireSpoolPriceDollarsSpanId) {
+    bind: function(_, buyWireSpoolButtonId, wireSpoolDollarsSpanId) {
       const DefaultBuyWireSpoolButtonId = "buyWireSpoolButton";
-      const DefaultWireSpoolPriceDollarsSpanId = "wireSpoolPriceDollarsSpan";
+      const DefaultWireSpoolDollarsSpanId = "wireSpoolDollarsSpan";
 
       _button = document.getElementById(buyWireSpoolButtonId || DefaultBuyWireSpoolButtonId);
-      _span = document.getElementById(wireSpoolPriceDollarsSpanId || DefaultWireSpoolPriceDollarsSpanId);
+      _span = document.getElementById(wireSpoolDollarsSpanId || DefaultWireSpoolDollarsSpanId);
       syncAll();
 
       _button.onclick = function() {

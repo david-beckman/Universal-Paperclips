@@ -3,7 +3,7 @@ body {
 }
 
 #consoleDiv {
-  height: 5em;
+  height: 7em;
   background-color: black;
   overflow: scroll;
   padding: .5em;
@@ -17,6 +17,7 @@ body {
 }
 #consoleDiv :last-child {
   color: white;
+  font-size: 110%;
 }
 #consoleDiv :last-child::before {
   content: "> ";

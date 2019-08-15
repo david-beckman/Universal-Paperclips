@@ -21,7 +21,7 @@
           <div>
             <input type="button" id="decrementClipCentsButton" value="lower" />
             <input type="button" id="incrementClipCentsButton" value="raise" />
-            Price per Clip: <span id="clipPriceDollarsSpan">{amount}</span>
+            Price per Clip: <span id="clipDollarsSpan">{amount}</span>
           </div>
         <div>Public Demand: <span id="publicDemandPercentSpan">{amount}</span></div>
         </div>
@@ -30,7 +30,7 @@
             <input type="button" id="incrementMarketingLevelButton" value="Marketing" />
             Level: <span id="marketingLevelSpan">{amount}</span>
           </div>
-          <div>Cost: <span id="marketingLevelPriceDollarsSpan">{amount}</span></div>
+          <div>Cost: <span id="marketingLevelDollarsSpan">{amount}</span></div>
         </div>
       </div>
       <div id="manufacturingGroupDiv" class="group">
@@ -43,7 +43,7 @@
             <input type="button" id="buyWireSpoolButton" value="Wire" />
             <span id="wireLengthSpan">{amount}</span> inches
           </div>
-          <div>Cost: <span id="wireSpoolPriceDollarsSpan">{amount}</span></div>
+          <div>Cost: <span id="wireSpoolDollarsSpan">{amount}</span></div>
         </div>
       </div>
     </div>
@@ -69,3 +69,43 @@
   <script src="application.js"></script>
 </body>
 </html>
+
+<!--
+var makeClipButton = document.getElementById("makeClipButton");
+for (var i=0; i<20; i++) setTimeout(() => {makeClipButton.click();}, i);
+
+const targetWirePrice = 15;
+
+var wireSpoolDollarsSpan = document.getElementById("wireSpoolDollarsSpan");
+var getWireSpoolDollars = () => { return parseInt(wireSpoolDollarsSpan.innerText.substring(1).replace(/,/g, "")); };
+var buyWireSpoolButton = document.getElementById("buyWireSpoolButton");
+var wireLengthSpan = document.getElementById("wireLengthSpan");
+var getWireLength = () => { return parseInt(wireLengthSpan.innerText.replace(/,/g, "")); };
+var autoWireBuyer = () => {
+  if (getWireSpoolDollars() > targetWirePrice && getWireLength() > 0) return;
+  if (!buyWireSpoolButton.disabled) {
+    buyWireSpoolButton.click();
+    setTimeout(autoWireBuyer, 1);
+  }
+};
+setInterval(autoWireBuyer, 100);
+
+var availableDollarsSpan = document.getElementById("availableDollarsSpan");
+var getAvailableDollars = () => { return parseFloat(availableDollarsSpan.innerText.substring(1).replace(/,/g, "")); };
+var unshippedClipsSpan = document.getElementById("unshippedClipsSpan");
+var getUnshippedClips = () => { return parseInt(unshippedClipsSpan.innerText.replace(/,/g, "")); };
+var clipDollarsSpan = document.getElementById("clipDollarsSpan");
+var getClipDollars = () => { return parseFloat(clipDollarsSpan.innerText.substring(1).replace(/,/g, "")); };
+var createClipperButton, clipperDollarsSpan;
+var getClipperDollars = () => { return clipperDollarsSpan ? parseFloat(clipperDollarsSpan.innerText.substring(1).replace(/,/g, "")) : 0; };
+setInterval(() => {
+  if (!createClipperButton) createClipperButton = document.getElementById("createClipperButton");
+  if (!clipperDollarsSpan) clipperDollarsSpan = document.getElementById("clipperDollarsSpan");
+
+  if (!createClipperButton || !clipperDollarsSpan || createClipperButton.disabled) return;
+
+  var theoreticalClips = getUnshippedClips() + getWireLength();
+  var assets = theoreticalClips * getClipDollars() + getAvailableDollars();
+  if ((targetWirePrice + getClipperDollars()) <= assets) createClipperButton.click();
+}, 100);
+-->

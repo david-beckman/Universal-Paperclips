@@ -40,7 +40,7 @@ var operationsStorageFactory = function(cpu, initial) {
 
     console.assert(false, "Amount is invalid: " + amount);
     return false;
-  }
+  };
 
   var isAtMax = function() {
     return cpu.getMemory() <= _operations;
