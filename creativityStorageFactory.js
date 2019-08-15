@@ -13,7 +13,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
   const ProcessorPower = 1.1
   const CreativityInterval = 10;
   const SpeedFactor = 1/4;
-  const TicksPerSecond = 1000;
+  const TicksPerSecond = 1e3;
 
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _creativity = (initial && initial.creativity) || InitialCreativity;
@@ -61,7 +61,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
       syncSpan();
 
       _creativityUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_creativity); }, 0);
+        callback(_creativity);
       });
     }
   }, CreativityInterval);
@@ -72,7 +72,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
       create();
 
       _enabledUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(true); }, 0);
+        callback(true);
       });
     },
     canConsume: function(amount) {
@@ -89,7 +89,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
       _creativity -= amount;
       syncSpan();
       _creativityUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_creativity); }, 0);
+        callback(_creativity);
       });
 
       return true;

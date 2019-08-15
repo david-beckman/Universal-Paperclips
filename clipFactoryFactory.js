@@ -6,8 +6,7 @@ var clipFactoryFactory = function(wireSupplier, initial) {
 
   const InitialClips = 0;
 
-  const WirePerClip = 1;
-  const TicksPerSecond = 1000;
+  const TicksPerSecond = 1e3;
   const CPSInterval = TicksPerSecond;
 
   var _clips = (initial && initial.clips) || InitialClips;
@@ -23,7 +22,7 @@ var clipFactoryFactory = function(wireSupplier, initial) {
 
   wireSupplier.addLengthUpdatedCallback(function() {
     if (!_button) return;
-    _button.disabled = !wireSupplier.canUse(WirePerClip);
+    _button.disabled = !wireSupplier.canUse(1);
   });
 
   var make = function(amount) {
@@ -32,10 +31,10 @@ var clipFactoryFactory = function(wireSupplier, initial) {
       return false;
     }
 
-    var amount = Math.min(Math.floor(wireSupplier.getLength() / WirePerClip), amount);
+    var amount = Math.min(Math.floor(wireSupplier.getLength()), amount);
     if (!amount) return false;
 
-    if (!wireSupplier.use(WirePerClip * amount)) {
+    if (!wireSupplier.use(amount)) {
       console.warn("Insufficient wire to make a new clip.");
       return false;
     }
@@ -43,7 +42,7 @@ var clipFactoryFactory = function(wireSupplier, initial) {
     _clips += amount;
     syncClipsSpan();
     _clipsUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_clips); }, 0);
+      callback(_clips);
     });
     return true;
   };

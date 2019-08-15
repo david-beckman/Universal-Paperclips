@@ -26,7 +26,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   const MarketingPower = 1.1;
   const PricingFactor = 80;
   const SellInterval = 100;
-  const TicksPerSecond = 1000;
+  const TicksPerSecond = 1e3;
   const DemandFactor = .7;
   const DemandPower = 1.15;
 

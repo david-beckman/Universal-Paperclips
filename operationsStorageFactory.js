@@ -7,7 +7,7 @@ var operationsStorageFactory = function(cpu, initial) {
   const InitialOperations = 0;
 
   const OperationsInterval = 10;
-  const TicksPerSecond = 1000;
+  const TicksPerSecond = 1e3;
   const OpsPerProcPerSec = 10;
 
   var _operations = (initial && initial.operations) || InitialOperations;
@@ -56,7 +56,7 @@ var operationsStorageFactory = function(cpu, initial) {
     _operations += Math.min(ops, cpu.getMemory() - _operations);
     syncOperationsSpan();
     _operationsUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_operations); }, 0);
+      callback(_operations);
     });
   }, OperationsInterval);
 
@@ -76,7 +76,7 @@ var operationsStorageFactory = function(cpu, initial) {
       _operations -= amount;
       syncOperationsSpan();
       _operationsUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_operations); }, 0);
+        callback(_operations);
       });
 
       return true;

@@ -1,6 +1,6 @@
 var wireSupplierFactory = function(initial) {
-  const InitialLength = 1000;
-  const InitialSpoolLength = 1000;
+  const InitialLength = 1e3;
+  const InitialSpoolLength = 1e3;
 
   var _length = (initial && (initial.length || initial.length === 0)) ? initial.length : InitialLength;
   var _spoolLength = (initial && initial.spoolLength) || InitialSpoolLength;
@@ -38,7 +38,7 @@ var wireSupplierFactory = function(initial) {
       _length += _spoolLength;
       syncSpan();
       _lengthUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_length); }, 0);
+        callback(_length);
       });
     },
     canUse: function(length) {
@@ -56,7 +56,7 @@ var wireSupplierFactory = function(initial) {
       _length -= length;
       syncSpan();
       _lengthUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_length); }, 0);
+        callback(_length);
       });
 
       return true;

@@ -44,7 +44,7 @@ var accountantFactory = function(initial) {
     _cents -= cents;
     syncSpan();
     _centsUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_cents); }, 0);
+      callback(_cents);
     });
     return true;
   };
@@ -66,7 +66,7 @@ var accountantFactory = function(initial) {
       _cents += cents;
       syncSpan();
       _centsUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_cents); }, 0);
+        callback(_cents);
       });
 
       return true;

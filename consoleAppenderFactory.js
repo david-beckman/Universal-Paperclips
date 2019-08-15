@@ -9,7 +9,7 @@ var consoleAppenderFactory = function(initial) {
 
   var messagesUpdated = function() {
     _messagesUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(); }, 0);
+      callback();
     });
   };
 

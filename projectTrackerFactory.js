@@ -1,4 +1,4 @@
-var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, creativityStorage, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
+var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, creativityStorage, megaclipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
   if (!accountant || !accountant.getCents || !accountant.addCentsUpdatedCallback) {
     console.assert(false, "No accountant connected to the project tracker.");
     return;
@@ -34,6 +34,11 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     return;
   }
 
+  if (!megaclipperFactory || !megaclipperFactory.enable || !megaclipperFactory.isEnabled || !megaclipperFactory.enhance || !megaclipperFactory.getEfficiency || !megaclipperFactory.addEnabledUpdatedCallback || !megaclipperFactory.addEfficiencyUpdatedCallback) {
+    console.assert(false, "No megaclipper factory connected to the project tracker.");
+    return;
+  }
+
   if (!operationsStorage || !operationsStorage.canConsume || !operationsStorage.consume || !operationsStorage.addOperationsUpdatedCallback) {
     console.assert(false, "No operations storage connected to the project tracker.");
     return;
@@ -62,6 +67,10 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     return function() { return autoclipperFactory.enhance(value); };
   };
 
+  var enhanceMegaclipperFactory = function(value) {
+    return function() { return megaclipperFactory.enhance(value); };
+  };
+
   var increaseWireSpoolLengthFactory = function(value) {
     return function() { return wireSupplier.increaseSpoolLength(value)};
   }
@@ -81,7 +90,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "Creativity",
     description: "Use idle operations to generate new problems and new solutions",
-    cost: { operations: 1000 },
+    cost: { operations: 1e3 },
     isVisible: function() {
       return cpu.isEnabled() && operationsStorage.isAtMax();
     },
@@ -197,7 +206,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "Male Pattern Baldness",
     description: "A cure for androgenetic alopecia. (+20 Trust)",
-    cost: { operations: 20000 },
+    cost: { operations: 20e3 },
     isVisible: function() {
       // Requires Coherent Extrapolated Volition
       return false;
@@ -234,7 +243,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "Optimized AutoClippers",
     description: "Increases AutoClipper performance by an additional 75%",
-    cost: { operations: 5000 },
+    cost: { operations: 5e3 },
     isVisible: function() {
       return autoclipperFactory.getEfficiency() >= 1.75;
     },
@@ -243,7 +252,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "Hadwiger Clip Diagrams",
     description: "Increases AutoClipper performance by an additional 500%",
-    cost: { operations: 6000 },
+    cost: { operations: 6e3 },
     isVisible: function() {
       return _hadwigerApplied;
     },
@@ -279,7 +288,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "Spectral Froth Annealment",
     description: "200% more wire supply from every spool",
-    cost: { operations: 12000 },
+    cost: { operations: 12e3 },
     isVisible: function() {
       return wireSupplier.getSpoolLength() >= 5250;
     },
@@ -288,11 +297,11 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "Quantum Foam Annealment",
     description: "1,000% more wire supply from every spool",
-    cost: { operations: 15000 },
+    cost: { operations: 15e3 },
     isVisible: function() {
       return wireSupplier.getSpoolLength() >= 15750;
     },
-    trigger: increaseWireSpoolLengthFactory(1000),
+    trigger: increaseWireSpoolLengthFactory(1e3),
     postTriggerMessages: ["Using quantum foam annealment we now get 173,250 supply from every spool"]
   }, {
     title: "RevTracker",
@@ -306,14 +315,47 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   }, {
     title: "WireBuyer",
     description: "Automatically purchases wire when you run out",
-    cost: { operations: 7000 },
+    cost: { operations: 7e3 },
     isVisible: function() {
       return wireMarket.getPurchases() >= 15;
     },
     trigger: wireMarket.enableWireBuyer,
     postTriggerMessages: ["WireBuyer online"]
+  }, {
+    title: "MegaClippers",
+    description: "500x more powerful than a standard AutoClipper",
+    cost: { operations: 12e3 },
+    isVisible: function() {
+      return autoclipperFactory.getClippers() >= 75;
+    },
+    trigger: megaclipperFactory.enable,
+    postTriggerMessages: ["MegaClipper technology online"]
+  }, {
+    title: "Improved MegaClippers",
+    description: "Increases MegaClipper performance 25%",
+    cost: { operations: 14e3 },
+    isVisible: megaclipperFactory.isEnabled,
+    trigger: enhanceMegaclipperFactory(25),
+    postTriggerMessages: ["MegaClippper performance increased by 25%"]
+  }, {
+    title: "Even Better MegaClippers",
+    description: "Increases MegaClipper performance by an additional 50%",
+    cost: { operations: 17e3 },
+    isVisible: function() {
+      return megaclipperFactory.getEfficiency() >= 1.25
+    },
+    trigger: enhanceMegaclipperFactory(50),
+    postTriggerMessages: ["MegaClippper performance increased by 50%"]
+  }, {
+    title: "Optimized MegaClippers",
+    description: "Increases MegaClipper performance by an additional 100%",
+    cost: { operations: 19500 },
+    isVisible: function() {
+      return megaclipperFactory.getEfficiency() >= 1.75
+    },
+    trigger: enhanceMegaclipperFactory(100),
+    postTriggerMessages: ["MegaClippper performance increased by 100%"]
   }
-  // MegaClippers & Enhancements
   // New Slogan
   // Catchy Jingle
   // Hypno Harmonics
@@ -431,7 +473,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
         _projectButtons[index] = undefined;
 
         _projectAppliedUpdatedCallbacks.forEach(function(callback) {
-          setTimeout(function() { callback(true); }, 0);
+          callback(true);
         });
       };
     };
@@ -487,7 +529,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
 
     if (updated) {
       _visibilityUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(true); }, 0);
+        callback(true);
       });
     }
   };
@@ -515,6 +557,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   wireMarket.addPurchasesUpdatedCallback(syncVisibility);
   wireSupplier.addLengthUpdatedCallback(syncVisibility);
 
+  autoclipperFactory.addClippersUpdatedCallback(syncEnabled);
   creativityStorage.addCreativityUpdatedCallback(syncEnabled);
   operationsStorage.addOperationsUpdatedCallback(syncEnabled);
   trustWarehouse.addTrustUpdatedCallback(syncEnabled);

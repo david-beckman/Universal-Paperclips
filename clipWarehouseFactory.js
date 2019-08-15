@@ -50,7 +50,7 @@ var clipWarehouseFactory = function(clipFactory, initial) {
       _shipped += amount;
       syncSpan();
       _shippedUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() {  callback(_shipped); });
+        callback(_shipped);
       });
 
       return true;

@@ -59,7 +59,7 @@ var clipMarketingFactory = function(accountant, initial) {
         syncAll();
 
         _levelUpdatedCallbacks.forEach(function(callback) {
-          setTimeout(function() { callback(_level); });
+          callback(_level);
         });
         return true;
       };

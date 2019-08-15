@@ -12,7 +12,7 @@ var cpuFactory = function(trustWarehouse, initial) {
   const StartingProcessors = 1;
   const StartingMemory = 1;
 
-  const MemoryFactor = 1000;
+  const MemoryFactor = 1e3;
 
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _processors = (initial && initial.processors) || InitialProcessors;
@@ -63,10 +63,10 @@ var cpuFactory = function(trustWarehouse, initial) {
 
       syncAll();
       _processorsUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_processors); }, 0);
+        callback(_processors);
       });
       _memoryUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(MemoryFactor * _memory); }, 0);
+        callback(MemoryFactor * _memory);
       });
     },
     bind: function(save, subgroupDiv) {
@@ -91,7 +91,7 @@ var cpuFactory = function(trustWarehouse, initial) {
         _processors++;
         syncAll();
         _processorsUpdatedCallbacks.forEach(function(callback) {
-          setTimeout(function() { callback(_processors); }, 0);
+          callback(_processors);
         });
       };
       processorsDiv.appendChild(_processorButton);
@@ -113,7 +113,7 @@ var cpuFactory = function(trustWarehouse, initial) {
         _memory++;
         syncAll();
         _memoryUpdatedCallbacks.forEach(function(callback) {
-          setTimeout(function() { callback(_memory); }, 0);
+          callback(_memory);
         });
       };
       memoryDiv.appendChild(_memoryButton);
@@ -142,10 +142,10 @@ var cpuFactory = function(trustWarehouse, initial) {
 
       syncAll();
       _memoryUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_memory); }, 0);
+        callback(_memory);
       });
       _processorsUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_processors); }, 0);
+        callback(_processors);
       });
     }
   };

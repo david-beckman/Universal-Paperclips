@@ -19,7 +19,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   const InitialWireBuyerRunning = false;
 
   const MinimumBaseDollars = 15;
-  const PriceReductionInterval = 25000;
+  const PriceReductionInterval = 25e3;
   const PriceReductionFactor = 999 / 1000;
   const AdjustPriceInterval = 100;
   const AdjustmentFrequency = 0.015;
@@ -59,7 +59,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
     if (newDollars === _dollars) return;
     _dollars = newDollars;
     _dollarsUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_dollars); }, 0);
+      callback(_dollars);
     });
     syncAll();
   }, AdjustPriceInterval);
@@ -86,7 +86,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
 
     _purchases++;
     _purchasesUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_purchases); }, 0);
+      callback(_purchases);
     });
     wireSupplier.addSpool();
 

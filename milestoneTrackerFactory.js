@@ -13,7 +13,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
   const InitialFibonacciLevel = 2;
   const InitialTicks = 0;
 
-  const FibonacciFactor = 1000;
+  const FibonacciFactor = 1e3;
   const LogMilestones = [
     { value: 5e2 }, // 500
     { value: 1e3 }, // 1,000
@@ -46,7 +46,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     const HoursPerDay = 24;
     const MinutesPerHour = 60;
     const SecondsPerMinute = 60;
-    const TicksPerSecond = 1000;
+    const TicksPerSecond = 1e3;
     const TicksPerMinute = TicksPerSecond * SecondsPerMinute;
     const TicksPerHour = TicksPerMinute * MinutesPerHour;
     const TicksPerDay = TicksPerHour * HoursPerDay;
@@ -74,7 +74,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
 
     _logLevel++;
     _logLevelUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_logLevel); }, 0);
+      callback(_logLevel);
     });
   };
 
@@ -89,7 +89,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
   var incrementFibonacciLevel = function() {
     _fibonacciLevel++;
     _fibonacciLevelUpdatedCallbacks.forEach(function(callback) {
-      setTimeout(function() { callback(_fibonacciLevel); }, 0);
+      callback(_fibonacciLevel);
     });
   };
 

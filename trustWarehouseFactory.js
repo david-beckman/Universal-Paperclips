@@ -26,7 +26,7 @@ var trustWarehouseFactory = function(initial) {
 
       _trust += amount;
       _trustUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_trust); }, 0);
+        callback(_trust);
       });
       syncSpan();
 
@@ -37,7 +37,7 @@ var trustWarehouseFactory = function(initial) {
 
       _trust -= amount;
       _trustUpdatedCallbacks.forEach(function(callback) {
-        setTimeout(function() { callback(_trust); }, 0);
+        callback(_trust);
       });
       syncSpan();
 

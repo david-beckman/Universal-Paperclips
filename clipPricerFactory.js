@@ -26,7 +26,7 @@ var clipPricerFactory = function(initial) {
 
         if (includeCallbacks) {
           _centsUpdatedCallbacks.forEach(function(callback) {
-            setTimeout(function() { callback(_cents); });
+            callback(_cents);
           });
         }
       })(false);
