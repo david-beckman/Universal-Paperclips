@@ -303,6 +303,15 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     },
     trigger: clipSeller.enableRevTracker,
     postTriggerMessages: ["RevTracker online"]
+  }, {
+    title: "WireBuyer",
+    description: "Automatically purchases wire when you run out",
+    cost: { operations: 7000 },
+    isVisible: function() {
+      return wireMarket.getPurchases() >= 15;
+    },
+    trigger: wireMarket.enableWireBuyer,
+    postTriggerMessages: ["WireBuyer online"]
   }
   // MegaClippers & Enhancements
   // New Slogan
