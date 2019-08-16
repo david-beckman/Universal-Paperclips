@@ -1,11 +1,18 @@
-var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, creativityStorage, megaclipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
+var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
+    creativityStorage, megaclipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
   if (!accountant || !accountant.getCents || !accountant.addCentsUpdatedCallback) {
     console.assert(false, "No accountant connected to the project tracker.");
     return;
   }
 
-  if (!autoclipperFactory || !autoclipperFactory.enhance || !autoclipperFactory.getClippers || !autoclipperFactory.addClippersUpdatedCallback || !autoclipperFactory.addEfficiencyUpdatedCallback) {
+  if (!autoclipperFactory || !autoclipperFactory.enhance || !autoclipperFactory.getClippers ||
+      !autoclipperFactory.addClippersUpdatedCallback || !autoclipperFactory.addEfficiencyUpdatedCallback) {
     console.assert(false, "No autoclipper factory connected to the project tracker.");
+    return;
+  }
+
+  if (!clipMarketing || !clipMarketing.enhance) {
+    console.assert(false, "No clip marketing connected to the project tracker.");
     return;
   }
 
@@ -29,17 +36,21 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     return;
   }
 
-  if (!creativityStorage || !creativityStorage.enable || !creativityStorage.canConsume || !creativityStorage.consume || !creativityStorage.addCreativityUpdatedCallback) {
+  if (!creativityStorage || !creativityStorage.enable || !creativityStorage.canConsume || !creativityStorage.consume ||
+      !creativityStorage.addCreativityUpdatedCallback) {
     console.assert(false, "No creativity storage connected to the project tracker.");
     return;
   }
 
-  if (!megaclipperFactory || !megaclipperFactory.enable || !megaclipperFactory.isEnabled || !megaclipperFactory.enhance || !megaclipperFactory.getEfficiency || !megaclipperFactory.addEnabledUpdatedCallback || !megaclipperFactory.addEfficiencyUpdatedCallback) {
+  if (!megaclipperFactory || !megaclipperFactory.enable || !megaclipperFactory.isEnabled || !megaclipperFactory.enhance ||
+      !megaclipperFactory.getEfficiency || !megaclipperFactory.addEnabledUpdatedCallback ||
+      !megaclipperFactory.addEfficiencyUpdatedCallback) {
     console.assert(false, "No megaclipper factory connected to the project tracker.");
     return;
   }
 
-  if (!operationsStorage || !operationsStorage.canConsume || !operationsStorage.consume || !operationsStorage.addOperationsUpdatedCallback) {
+  if (!operationsStorage || !operationsStorage.canConsume || !operationsStorage.consume ||
+      !operationsStorage.addOperationsUpdatedCallback) {
     console.assert(false, "No operations storage connected to the project tracker.");
     return;
   }
@@ -49,12 +60,14 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     return;
   }
 
-  if (!wireMarket || !wireMarket.getDollars || !wireMarket.addDollarsUpdatedCallback || !wireMarket.getPurchases || !wireMarket.addPurchasesUpdatedCallback) {
+  if (!wireMarket || !wireMarket.getDollars || !wireMarket.addDollarsUpdatedCallback || !wireMarket.getPurchases ||
+      !wireMarket.addPurchasesUpdatedCallback) {
     console.assert(false, "No wire market connected to the project tracker.");
     return;
   }
 
-  if (!wireSupplier || !wireSupplier.getLength || !wireSupplier.getSpoolLength || !wireSupplier.increaseSpoolLength || !wireSupplier.addSpool || !wireSupplier.addLengthUpdatedCallback) {
+  if (!wireSupplier || !wireSupplier.getLength || !wireSupplier.getSpoolLength || !wireSupplier.increaseSpoolLength ||
+      !wireSupplier.addSpool || !wireSupplier.addLengthUpdatedCallback) {
     console.assert(false, "No wire supplier connected to the project tracker.");
     return;
   }
@@ -131,7 +144,10 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
-    trigger: incrementTrustFactory(1),
+    trigger: function() {
+      _lexicalProcessingApplied = true;
+      return trustWarehouse.increaseTrust(1);
+    },
     postTriggerMessages: [
       "Lexical Processing online, TRUST INCREASED",
       "'Impossible' is a word to be found only in the dictionary of fools. -Napoleon"
@@ -299,7 +315,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     description: "1,000% more wire supply from every spool",
     cost: { operations: 15e3 },
     isVisible: function() {
-      return wireSupplier.getSpoolLength() >= 15750;
+      return wireMarket.getDollars() >= 125;
     },
     trigger: increaseWireSpoolLengthFactory(1e3),
     postTriggerMessages: ["Using quantum foam annealment we now get 173,250 supply from every spool"]
@@ -355,11 +371,62 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
     },
     trigger: enhanceMegaclipperFactory(100),
     postTriggerMessages: ["MegaClippper performance increased by 100%"]
+  }, {
+    title: " New Slogan",
+    description: "Improve marketing effectiveness by 50%",
+    cost: {
+      creativity: 25,
+      operations: 2500
+    },
+    isVisible: function() {
+      return _lexicalProcessingApplied;
+    },
+    trigger: function() {
+      return clipMarketing.enhance(50);
+    },
+    postTriggerMessages: ["Clip It! Marketing is now 50% more effective"]
+  }, {
+    title: "Catchy Jingle",
+    description: "Double marketing effectiveness",
+    cost: {
+      creativity: 25,
+      operations: 2500
+    },
+    isVisible: function() {
+      return _combinatoryHarmonicsApplied;
+    },
+    trigger: function() {
+      _catchyJingleApplied = true;
+      return clipMarketing.enhance(100);
+    },
+    postTriggerMessages: ["Clip It Good! Marketing is now twice as effective"]
+  }, {
+    title: "Hypno Harmonics",
+    description: "Use neuro-resonant frequencies to influence consumer behavior",
+    cost: {
+      operations: 7500,
+      trust: 1
+    },
+    isVisible: function() {
+      return _combinatoryHarmonicsApplied;
+    },
+    trigger: function() {
+      _hypnoHarmonicsApplied = true;
+      return clipMarketing.enhance(400);
+    },
+    postTriggerMessages: ["Marketing is now 5 times more effective"]
+  }, {
+    title: "HypnoDrones",
+    description: "Autonomous aerial brand ambassadors",
+    cost: { operations: 70e3 },
+    isVisible: function() {
+      return _hypnoHarmonicsApplied;
+    },
+    trigger: function() {
+      _hypnoDronesApplied = true;
+    },
+    postTriggerMessages: ["HypnoDrone tech now available..."]
   }
-  // New Slogan
-  // Catchy Jingle
-  // Hypno Harmonics
-  // HypnoDrones
   // Quantum Computing
   // Photonic Chip
   // Algorithmic Trading
@@ -423,10 +490,20 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   const InitialApplied = [];
   const InitialVisible = [];
   const InitialHadwigerApplied = false;
+  const InitialLexicalProcessingApplied = false;
+  const InitialCombinatoryHarmonicsApplied = false;
+  const InitialCatchyJingleApplied = false;
+  const InitialHypnoHarmonicsApplied = false;
+  const InitialHypnoDronesApplied = false;
 
   var _projectApplied = (initial && initial.applied) || InitialApplied;
   var _projectVisible = (initial && initial.visible) || InitialVisible;
   var _hadwigerApplied = (initial && initial.hadwigerApplied) || InitialHadwigerApplied;
+  var _lexicalProcessingApplied = (initial && initial.lexicalProcessingApplied) || InitialLexicalProcessingApplied;
+  var _combinatoryHarmonicsApplied = (initial && initial.combinatoryHarmonicsApplied) || InitialCombinatoryHarmonicsApplied;
+  var _catchyJingleApplied = (initial && initial.catchyJingleApplied) || InitialCatchyJingleApplied;
+  var _hypnoHarmonicsApplied = (initial && initial.hypnoHarmonicsApplied) || InitialHypnoHarmonicsApplied;
+  var _hypnoDronesApplied = (initial && initial.hypnoDronesApplied) || InitialHypnoDronesApplied;
   var _projectAppliedUpdatedCallbacks = new Array();
   var _visibilityUpdatedCallbacks = new Array();
   var _projectButtons = new Array();
@@ -555,9 +632,9 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
   creativityStorage.addCreativityUpdatedCallback(syncVisibility);
   operationsStorage.addOperationsUpdatedCallback(syncVisibility);
   wireMarket.addPurchasesUpdatedCallback(syncVisibility);
+  wireMarket.addDollarsUpdatedCallback(syncVisibility);
   wireSupplier.addLengthUpdatedCallback(syncVisibility);
 
-  autoclipperFactory.addClippersUpdatedCallback(syncEnabled);
   creativityStorage.addCreativityUpdatedCallback(syncEnabled);
   operationsStorage.addOperationsUpdatedCallback(syncEnabled);
   trustWarehouse.addTrustUpdatedCallback(syncEnabled);
@@ -584,6 +661,11 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipSeller,
       return {
         applied: _projectApplied,
         hadwigerApplied: _hadwigerApplied,
+        lexicalProcessingApplied: _lexicalProcessingApplied,
+        combinatoryHarmonicsApplied: _combinatoryHarmonicsApplied,
+        catchyJingleApplied: _catchyJingleApplied,
+        hypnoHarmonicsApplied: _hypnoHarmonicsApplied,
+        hypnoDronesApplied: _hypnoDronesApplied,
         visible: _projectVisible
       };
     },

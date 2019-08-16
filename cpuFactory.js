@@ -1,6 +1,5 @@
 var cpuFactory = function(trustWarehouse, initial) {
   if (!trustWarehouse || !trustWarehouse.getTrust || !trustWarehouse.addTrustUpdatedCallback) {
-    console.dir(trustWarehouse);
     console.assert(false, "No trust warehouse connected to the CPU.");
     return;
   }

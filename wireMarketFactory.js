@@ -1,12 +1,10 @@
 var wireMarketFactory = function(accountant, wireSupplier, initial) {
   if (!accountant || !accountant.canDebitDollars || !accountant.addCentsUpdatedCallback || !accountant.debitDollars) {
-    console.dir(accountant);
     console.assert(false, "No accountant hooked to the wire market.");
     return false;
   }
 
   if (!wireSupplier || !wireSupplier.addSpool) {
-    console.dir(wireSupplier);
     console.assert(false, "No wire supplier hooked to the wire market.");
     return false;
   }

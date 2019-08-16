@@ -1,17 +1,19 @@
 var clipMarketingFactory = function(accountant, initial) {
   if (!accountant || !accountant.canDebitDollars || !accountant.debitDollars || !accountant.addCentsUpdatedCallback) {
-    console.dir(accountant);
     console.assert(false, "No accountant hooked to marketing.");
     return;
   }
 
   const InitialLevel = 1;
+  const InitialEffectiveness = 1;
 
   const BaseDollars = 100;
   const IncrementPower = 2;
 
   var _level = (initial && initial.level) || InitialLevel;
+  var _effectiveness = (initial && initial.effectiveness) || InitialEffectiveness;
   var _levelUpdatedCallbacks = new Array();
+  var _effectivenessUpdatedCallbacks = new Array();
 
   var getDollars = function() {
     return BaseDollars * Math.pow(IncrementPower, _level - 1);
@@ -31,8 +33,14 @@ var clipMarketingFactory = function(accountant, initial) {
     getLevel: function() {
       return _level;
     },
+    getEffectiveness: function() {
+      return _effectiveness;
+    },
     bind: function(save, incrementMarketingLevelButtonId, marketingLevelSpanId, marketingLevelDollarsSpanId) {
-      if (save) _levelUpdatedCallbacks.push(save);
+      if (save) {
+        _levelUpdatedCallbacks.push(save);
+        _effectivenessUpdatedCallbacks.push(save);
+      }
 
       const DefaultIncrementMarketingLevelButtonId = "incrementMarketingLevelButton";
       const DefaultmarketingLevelSpanId = "marketingLevelSpan";
@@ -64,12 +72,29 @@ var clipMarketingFactory = function(accountant, initial) {
         return true;
       };
     },
+    enhance: function(percent) {
+      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
+        console.assert(false, "Invalid percent to enhance marketing: " + percent);
+        return false;
+      }
+
+      _effectiveness *= (1 + percent / 100);
+      _effectivenessUpdatedCallbacks.forEach(function(callback) {
+        callback (_effectiveness);
+      });
+
+      return true;
+    },
     addLevelUpdatedCallback: function(callback) {
       if (callback) _levelUpdatedCallbacks.push(callback);
     },
+    addEffectivenessUpdatedCallback: function(callback) {
+      if (callback) _effectivenessUpdatedCallbacks.push(callback);
+    },
     serialize: function() {
       return {
-        level: _level
+        level: _level,
+        effectiveness: _effectiveness
       };
     }
   };

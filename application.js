@@ -65,8 +65,11 @@
   (creativityStorage = creativityStorageFactory(cpu, operationsStorage, savedGame.creativityStorage)).bind(save);
 
   // Level 6 ...
-  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipSeller, clipWarehouse, consoleAppender, cpu, creativityStorage, megaClipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker)).bind(save);
+  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
+      creativityStorage, megaClipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker))
+    .bind(save);
 
   // Level 7 ...
-  (computer = computerFactory(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, savedGame.computer)).bind(save);
+  (computer = computerFactory(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse,
+    savedGame.computer)).bind(save);
 })();

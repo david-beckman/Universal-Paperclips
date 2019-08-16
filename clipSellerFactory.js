@@ -4,7 +4,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
     return false;
   }
 
-  if (!clipMarketing || !clipMarketing.getLevel || !clipMarketing.addLevelUpdatedCallback) {
+  if (!clipMarketing || !clipMarketing.getLevel || !clipMarketing.addLevelUpdatedCallback || !clipMarketing.getEffectiveness) {
     console.assert(false, "No marketing hooked to the seller.");
     return false;
   }
@@ -35,14 +35,14 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   var _demandSpan;
 
   var getDemandPercent = function() {
-    var marketingBoost = Math.pow(MarketingPower, clipMarketing.getLevel() - 1);
+    var marketingBoost = Math.pow(MarketingPower, clipMarketing.getLevel() - 1) * clipMarketing.getEffectiveness();
     var pricingBoost = PricingFactor / clipPricer.getCents();
     return marketingBoost * pricingBoost;
   };
 
   var getIdealCPS = function() {
     var demand = getDemandPercent();
-    var chanceOfSale = demand / 100;
+    var chanceOfSale = Math.min(demand / 100, 1);
     var amountOfSale = DemandFactor * Math.pow(demand, DemandPower);
     var idealCPS = Math.round(chanceOfSale * amountOfSale * TicksPerSecond / SellInterval);
     return Math.min(idealCPS, clipWarehouse.getUnshipped());
@@ -60,17 +60,11 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
     syncRevTracker();
   };
 
-  clipPricer.addCentsUpdatedCallback(function() {
-    syncSpans();
-  });
+  clipPricer.addCentsUpdatedCallback(syncSpans);
+  clipMarketing.addLevelUpdatedCallback(syncSpans);
+  clipMarketing.addEffectivenessUpdatedCallback(syncSpans);
 
-  clipMarketing.addLevelUpdatedCallback(function() {
-    syncSpans();
-  });
-
-  clipWarehouse.addUnshippedUpdatedCallback(function() {
-    syncRevTracker();
-  });
+  clipWarehouse.addUnshippedUpdatedCallback(syncRevTracker);
 
   var addRevTracker = function() {
     if (!_demandSpan) return;

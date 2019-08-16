@@ -141,7 +141,8 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
     serialize: function() {
       return {
         enabled: _enabled,
-        clippers: _clippers
+        clippers: _clippers,
+        efficiency: _efficiency
       };
     },
     addEnabledUpdatedCallback: function(callback) {
