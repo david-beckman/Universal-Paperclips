@@ -159,7 +159,10 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
-    trigger: incrementTrustFactory(1),
+    trigger: function() {
+      _combinatoryHarmonicsApplied = true;
+      return trustWarehouse.increaseTrust(1);
+    },
     postTriggerMessages: [
       "Combinatory Harmonics mastered, TRUST INCREASED",
       "Listening is selecting and interpreting and acting and making decisions -Pauline Oliveros"
