@@ -13,9 +13,7 @@ var wireSupplierFactory = function(initial) {
   };
 
   var isValid = function(length) {
-    if (length && length > 0 && length === Math.floor(length)) return true;
-    console.assert(false, "Invalid length: " + length);
-    return false;
+    return Number.isPositiveInteger(length, "Invalid length: ");
   };
 
   return {
@@ -26,8 +24,7 @@ var wireSupplierFactory = function(initial) {
       return _spoolLength;
     },
     increaseSpoolLength: function(percent) {
-      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
-        console.assert(false, "Invalid percent to enhance spool length: " + percent);
+      if (!Number.isPositiveInteger(percent, "Invalid percent to enhance spool length: ")) {
         return false;
       }
 
@@ -37,9 +34,7 @@ var wireSupplierFactory = function(initial) {
     addSpool: function() {
       _length += _spoolLength;
       syncSpan();
-      _lengthUpdatedCallbacks.forEach(function(callback) {
-        callback(_length);
-      });
+      _lengthUpdatedCallbacks.forEachCallback(_length);
     },
     canUse: function(length) {
       if (!isValid(length)) return false;
@@ -55,18 +50,14 @@ var wireSupplierFactory = function(initial) {
 
       _length -= length;
       syncSpan();
-      _lengthUpdatedCallbacks.forEach(function(callback) {
-        callback(_length);
-      });
+      _lengthUpdatedCallbacks.forEachCallback(_length);
 
       return true;
     },
-    bind: function(save, wireLengthSpanId) {
-      if (save) _lengthUpdatedCallbacks.push(save);
-
+    bind: function() {
       const DefaultWireLengthSpanId = "wireLengthSpan";
 
-      _span = document.getElementById(wireLengthSpanId || DefaultWireLengthSpanId);
+      _span = document.getElementById(DefaultWireLengthSpanId);
       syncSpan();
     },
     addLengthUpdatedCallback: function(callback) {

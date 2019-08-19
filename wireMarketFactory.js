@@ -56,9 +56,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
 
     if (newDollars === _dollars) return;
     _dollars = newDollars;
-    _dollarsUpdatedCallbacks.forEach(function(callback) {
-      callback(_dollars);
-    });
+    _dollarsUpdatedCallbacks.forEachCallback(_dollars);
     syncAll();
   }, AdjustPriceInterval);
 
@@ -83,9 +81,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
     }
 
     _purchases++;
-    _purchasesUpdatedCallbacks.forEach(function(callback) {
-      callback(_purchases);
-    });
+    _purchasesUpdatedCallbacks.forEachCallback(_purchases);
     wireSupplier.addSpool();
 
     _baseDollars += DollarsIncreaseAmount;
@@ -141,17 +137,12 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
 
       buildWireBuyer();
     },
-    bind: function(save, buyWireSpoolButtonId, wireSpoolDollarsSpanId) {
-      if (save) {
-        _dollarsUpdatedCallbacks.push(save);
-        _purchasesUpdatedCallbacks.push(save);
-      }
-
+    bind: function() {
       const DefaultBuyWireSpoolButtonId = "buyWireSpoolButton";
       const DefaultWireSpoolDollarsSpanId = "wireSpoolDollarsSpan";
 
-      _dollarsSpan = document.getElementById(wireSpoolDollarsSpanId || DefaultWireSpoolDollarsSpanId);
-      _buyButton = document.getElementById(buyWireSpoolButtonId || DefaultBuyWireSpoolButtonId);
+      _dollarsSpan = document.getElementById(DefaultWireSpoolDollarsSpanId);
+      _buyButton = document.getElementById(DefaultBuyWireSpoolButtonId);
       _buyButton.onclick = buyWire;
       syncAll();
 

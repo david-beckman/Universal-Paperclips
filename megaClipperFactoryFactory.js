@@ -16,7 +16,6 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
   const InitialCents = 50e3;
   const PriceFactor = 100e3;
   const PricePower = 1.07;
-  const TicksPerSecond = 1e3;
   const MakeInterval = 10;
   const ClipperFactor = 500;
 
@@ -24,7 +23,6 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
   var _clippers = (initial && initial.clippers) || InitialClippers;
   var _efficiency = (initial && initial.efficiency) || InitialEfficiency;
   var _enabledUpdatedCallbacks = new Array();
-  var _clippersUpdatedCallbacks = new Array();
   var _efficiencyUpdatedCallbacks = new Array();
 
   var _groupDiv;
@@ -35,13 +33,12 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
   var incrementClippers = function() {
     if (!accountant.debitCents(getCents())) {
       console.warn("Insufficient funds to increment megaclippers.");
+      return false;
     }
 
     _clippers++;
     syncSpans();
-    _clippersUpdatedCallbacks.forEach(function(callback) {
-      callback(_clippers);
-    });
+    return true;
   };
 
   var getCents = function() {
@@ -56,7 +53,7 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
 
   var syncSpans = function() {
     if (_clippersSpan) _clippersSpan.innerText = _clippers.toLocaleString();
-    if (_dollarsSpan) _dollarsSpan.innerText = (getCents() / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
+    if (_dollarsSpan) _dollarsSpan.innerText = (getCents() / CentsPerDollar).toUSDString();
   };
 
   var appendSubgroup = function() {
@@ -97,18 +94,17 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
     var total = _clippers * ClipperFactor * _efficiency * MakeInterval + remainder;
     var toMake = Math.floor(total / TicksPerSecond);
     remainder = total - (toMake * TicksPerSecond);
-    clipFactory.make(toMake);
+    if (toMake > 0) {
+      var extras = toMake - clipFactory.make(toMake);
+      if (extras === toMake) remainder = 0; // No wire left
+      else if (extras !== 0) remainder += extras * TicksPerSecond; // Partial wire left
+    }
   }, MakeInterval);
 
   return {
-    bind: function(save, manufacturingGroupDivId) {
-      if (save) {
-        _enabledUpdatedCallbacks.push(save);
-        _clippersUpdatedCallbacks.push(save);
-      }
-
+    bind: function() {
       const DefaultManufacturingGroupDivId = "manufacturingGroupDiv";
-      _groupDiv = document.getElementById(manufacturingGroupDivId || DefaultManufacturingGroupDivId);
+      _groupDiv = document.getElementById(DefaultManufacturingGroupDivId);
 
       if (_enabled) appendSubgroup();
     },
@@ -118,20 +114,15 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
     enable: function() {
       _enabled = true;
       appendSubgroup();
-      _enabledUpdatedCallbacks.forEach(function(callback) {
-        callback(true);
-      });
+      _enabledUpdatedCallbacks.forEachCallback(true);
     },
     enhance: function(percent) {
-      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
-        console.assert(false, "Invalid percent to enhance megaclippers: " + percent);
+      if (!Number.isPositiveInteger(percent, "Invalid percent to enhance megaclippers: ")) {
         return false;
       }
 
       _efficiency += percent / 100;
-      _efficiencyUpdatedCallbacks.forEach(function(callback) {
-        callback (_efficiency);
-      });
+      _efficiencyUpdatedCallbacks.forEachCallback(_efficiency);
 
       return true;
     },

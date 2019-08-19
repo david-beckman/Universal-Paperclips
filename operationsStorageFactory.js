@@ -7,7 +7,6 @@ var operationsStorageFactory = function(cpu, initial) {
   const InitialOperations = 0;
 
   const OperationsInterval = 10;
-  const TicksPerSecond = 1e3;
   const OpsPerProcPerSec = 10;
 
   var _operations = (initial && initial.operations) || InitialOperations;
@@ -36,10 +35,7 @@ var operationsStorageFactory = function(cpu, initial) {
   });
 
   var isValidAmount = function(amount) {
-    if ((amount || amount === 0) && amount >= 0 && amount === Math.floor(amount)) return true;
-
-    console.assert(false, "Amount is invalid: " + amount);
-    return false;
+    return Number.isPositiveInteger(amount, "Operations amount is invalid: ");
   };
 
   var isAtMax = function() {
@@ -55,9 +51,7 @@ var operationsStorageFactory = function(cpu, initial) {
     remainder = total - (ops * TicksPerSecond);
     _operations += Math.min(ops, cpu.getMemory() - _operations);
     syncOperationsSpan();
-    _operationsUpdatedCallbacks.forEach(function(callback) {
-      callback(_operations);
-    });
+    _operationsUpdatedCallbacks.forEachCallback(_operations);
   }, OperationsInterval);
 
   return {
@@ -75,15 +69,11 @@ var operationsStorageFactory = function(cpu, initial) {
 
       _operations -= amount;
       syncOperationsSpan();
-      _operationsUpdatedCallbacks.forEach(function(callback) {
-        callback(_operations);
-      });
+      _operationsUpdatedCallbacks.forEachCallback(_operations);
 
       return true;
     },
-    bind: function(save, subgroupDiv) {
-      if (save) _operationsUpdatedCallbacks.push(save);
-
+    bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
       var operationsDiv = document.createElement("div");

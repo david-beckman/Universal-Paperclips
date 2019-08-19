@@ -61,19 +61,10 @@ var cpuFactory = function(trustWarehouse, initial) {
       _memory = StartingMemory;
 
       syncAll();
-      _processorsUpdatedCallbacks.forEach(function(callback) {
-        callback(_processors);
-      });
-      _memoryUpdatedCallbacks.forEach(function(callback) {
-        callback(MemoryFactor * _memory);
-      });
+      _processorsUpdatedCallbacks.forEachCallback(_processors);
+      _memoryUpdatedCallbacks.forEachCallback(MemoryFactor * _memory);
     },
-    bind: function(save, subgroupDiv) {
-      if (save) {
-        _processorsUpdatedCallbacks.push(save);
-        _memoryUpdatedCallbacks.push(save);
-      }
-
+    bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
       var processorsDiv = document.createElement("div");
@@ -89,9 +80,7 @@ var cpuFactory = function(trustWarehouse, initial) {
 
         _processors++;
         syncAll();
-        _processorsUpdatedCallbacks.forEach(function(callback) {
-          callback(_processors);
-        });
+        _processorsUpdatedCallbacks.forEachCallback(_processors);
       };
       processorsDiv.appendChild(_processorButton);
       processorsDiv.appendChild(document.createTextNode(" "));
@@ -111,9 +100,7 @@ var cpuFactory = function(trustWarehouse, initial) {
 
         _memory++;
         syncAll();
-        _memoryUpdatedCallbacks.forEach(function(callback) {
-          callback(_memory);
-        });
+        _memoryUpdatedCallbacks.forEachCallback(_memory);
       };
       memoryDiv.appendChild(_memoryButton);
       memoryDiv.appendChild(document.createTextNode(" "));
@@ -140,12 +127,8 @@ var cpuFactory = function(trustWarehouse, initial) {
       _memory = 0;
 
       syncAll();
-      _memoryUpdatedCallbacks.forEach(function(callback) {
-        callback(_memory);
-      });
-      _processorsUpdatedCallbacks.forEach(function(callback) {
-        callback(_processors);
-      });
+      _memoryUpdatedCallbacks.forEachCallback(_memory);
+      _processorsUpdatedCallbacks.forEachCallback(_processors);
     }
   };
 };

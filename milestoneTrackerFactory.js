@@ -31,7 +31,6 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
 
   var _logLevel = (initial && initial.logLevel) || InitialLogLevel;
   var _fibonacciLevel = (initial && initial.fibonacciLevel) || InitialFibonacciLevel;
-  var _logLevelUpdatedCallbacks = new Array();
   var _fibonacciLevelUpdatedCallbacks = new Array();
   var _startTime = new Date();
   var _ticks = (initial && initial.ticks) || InitialTicks;
@@ -46,7 +45,6 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     const HoursPerDay = 24;
     const MinutesPerHour = 60;
     const SecondsPerMinute = 60;
-    const TicksPerSecond = 1e3;
     const TicksPerMinute = TicksPerSecond * SecondsPerMinute;
     const TicksPerHour = TicksPerMinute * MinutesPerHour;
     const TicksPerDay = TicksPerHour * HoursPerDay;
@@ -73,9 +71,6 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     consoleAppender.append((level.display || level.value.toLocaleString()) + " clips created in " + durationToLocaleString());
 
     _logLevel++;
-    _logLevelUpdatedCallbacks.forEach(function(callback) {
-      callback(_logLevel);
-    });
   };
 
   var getFibonacciClipTarget = function() {
@@ -88,9 +83,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
 
   var incrementFibonacciLevel = function() {
     _fibonacciLevel++;
-    _fibonacciLevelUpdatedCallbacks.forEach(function(callback) {
-      callback(_fibonacciLevel);
-    });
+    _fibonacciLevelUpdatedCallbacks.forEachCallback(_fibonacciLevel);
   };
 
   var checkFibonacciLevel = function(clips) {
@@ -104,12 +97,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
   });
 
   return {
-    bind: function(save) {
-      if (save) {
-        _logLevelUpdatedCallbacks.push(save);
-        _fibonacciLevelUpdatedCallbacks.push(save);
-      }
-    },
+    bind: function() { },
     incrementFibonacciLevel: incrementFibonacciLevel,
     addFibonacciLevelUpdatedCallback: function(callback) {
       if (callback) _fibonacciLevelUpdatedCallbacks.push(callback);

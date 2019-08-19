@@ -11,10 +11,7 @@ var trustWarehouseFactory = function(initial) {
   };
 
   var isValid = function(amount) {
-    if (amount && amount > 0 && amount === Math.floor(amount)) return true;
-
-    console.assert(false, "Trust amount is invalid: " + amount);
-    return false;
+    return Number.isPositiveInteger(amount, "Trust amount is invalid: ");
   };
 
   return {
@@ -25,9 +22,7 @@ var trustWarehouseFactory = function(initial) {
       if (!isValid(amount)) return false;
 
       _trust += amount;
-      _trustUpdatedCallbacks.forEach(function(callback) {
-        callback(_trust);
-      });
+      _trustUpdatedCallbacks.forEachCallback(_trust);
       syncSpan();
 
       return true;
@@ -36,16 +31,12 @@ var trustWarehouseFactory = function(initial) {
       if (!isValid(amount)) return false;
 
       _trust -= amount;
-      _trustUpdatedCallbacks.forEach(function(callback) {
-        callback(_trust);
-      });
+      _trustUpdatedCallbacks.forEachCallback(_trust);
       syncSpan();
 
       return true;
     },
-    bind: function(save, subgroupDiv) {
-      if (save) _trustUpdatedCallbacks.push(save);
-
+    bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
       var trustDiv = document.createElement("div");

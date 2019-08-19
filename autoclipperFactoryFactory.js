@@ -21,13 +21,11 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   const InitialCents = 500;
   const PriceFactor = 100;
   const PricePower = 1.1;
-  const TicksPerSecond = 1e3;
   const MakeInterval = 10;
 
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _clippers = (initial && initial.clippers) || InitialClippers;
   var _efficiency = (initial && initial.efficiency) || InitialEfficiency;
-  var _enabledUpdatedCallbacks = new Array();
   var _clippersUpdatedCallbacks = new Array();
   var _efficiencyUpdatedCallbacks = new Array();
 
@@ -48,19 +46,19 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
 
   var syncSpans = function() {
     if (_clippersSpan) _clippersSpan.innerText = _clippers.toLocaleString();
-    if (_dollarsSpan) _dollarsSpan.innerText = (getCents() / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
+    if (_dollarsSpan) _dollarsSpan.innerText = (getCents() / CentsPerDollar).toUSDString();
   };
 
   var incrementClippers = function() {
     if (!accountant.debitCents(getCents())) {
       console.warn("Insufficient funds to increment autoclippers.");
+      return false;
     }
 
     _clippers++;
     syncSpans();
-    _clippersUpdatedCallbacks.forEach(function(callback) {
-      callback(_clippers);
-    });
+    _clippersUpdatedCallbacks.forEachCallback(_clippers);
+    return true;
   };
 
   var appendSubgroup = function() {
@@ -100,9 +98,6 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
     _enabled = true;
     consoleAppender.append("AutoClippers available for purchase");
     appendSubgroup();
-    _enabledUpdatedCallbacks.forEach(function(callback) {
-      callback(true);
-    });
   })();
 
   accountant.addCentsUpdatedCallback(function() {
@@ -117,18 +112,17 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
     var total = _clippers * _efficiency * MakeInterval + remainder;
     var toMake = Math.floor(total / TicksPerSecond);
     remainder = total - (toMake * TicksPerSecond);
-    clipFactory.make(toMake);
+    if (toMake > 0) {
+      var extras = toMake - clipFactory.make(toMake);
+      if (extras === toMake) remainder = 0; // No wire left
+      else if (extras !== 0) remainder += extras * TicksPerSecond; // Partial wire left
+    }
   }, MakeInterval);
 
   return {
-    bind: function(save, manufacturingGroupDivId) {
-      if (save) {
-        _enabledUpdatedCallbacks.push(save);
-        _clippersUpdatedCallbacks.push(save);
-      }
-
+    bind: function() {
       const DefaultManufacturingGroupDivId = "manufacturingGroupDiv";
-      _groupDiv = document.getElementById(manufacturingGroupDivId || DefaultManufacturingGroupDivId);
+      _groupDiv = document.getElementById(DefaultManufacturingGroupDivId);
 
       if (_enabled) appendSubgroup();
     },
@@ -139,15 +133,12 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
       return _efficiency;
     },
     enhance: function(percent) {
-      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
-        console.assert(false, "Invalid percent to enhance autoclippers: " + percent);
+      if (!Number.isPositiveInteger(percent, "Invalid percent to enhance autoclippers: ")) {
         return false;
       }
 
       _efficiency += percent / 100;
-      _efficiencyUpdatedCallbacks.forEach(function(callback) {
-        callback (_efficiency);
-      });
+      _efficiencyUpdatedCallbacks.forEachCallback(_efficiency);
 
       return true;
     },

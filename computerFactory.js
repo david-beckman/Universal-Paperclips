@@ -57,7 +57,7 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
     trustDiv.className = "sub-group";
     group.appendChild(trustDiv);
 
-    trustWarehouse.bind(undefined, trustDiv);
+    trustWarehouse.bind(trustDiv);
 
     var productionGoalDiv = document.createElement("div");
     productionGoalDiv.appendChild(document.createTextNode("+1 Trust at: "));
@@ -67,16 +67,16 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
 
     var cpuDiv = document.createElement("div");
     cpuDiv.className = "sub-group";
-    cpu.bind(undefined, cpuDiv);
+    cpu.bind(cpuDiv);
     group.appendChild(cpuDiv);
 
     var operationsDiv = document.createElement("div");
     operationsDiv.className = "sub-group";
-    operationsStorage.bind(undefined, operationsDiv);
-    creativityStorage.bind(undefined, operationsDiv);
+    operationsStorage.bind(operationsDiv);
+    creativityStorage.bind(operationsDiv);
     group.appendChild(operationsDiv);
 
-    projectTracker.bind(undefined, _div);
+    projectTracker.bind(_div);
 
     syncSpan();
   };
@@ -128,9 +128,9 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
   });
 
   return {
-    bind: function(_, secondColumnDivId) {
+    bind: function() {
       const DefaultSecondColumnDivId = "secondColumnDiv";
-      _div = document.getElementById(secondColumnDivId || DefaultSecondColumnDivId);
+      _div = document.getElementById(DefaultSecondColumnDivId);
 
       if (cpu.isEnabled()) create();
     },

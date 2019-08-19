@@ -8,26 +8,22 @@ var clipPricerFactory = function(initial) {
     getCents: function() {
       return _cents;
     },
-    bind: function(save, decrementClipCentsButtonId, incrementClipCentsButtonId, clipDollarsSpanId) {
-      if (save) _centsUpdatedCallbacks.push(save);
-
+    bind: function() {
       const DefaultDecrementClipCentsButtonId = "decrementClipCentsButton";
       const DefaultIncrementClipCentsButtonId = "incrementClipCentsButton";
       const DefaultClipDollarsSpanId = "clipDollarsSpan";
 
-      var decrementButton = document.getElementById(decrementClipCentsButtonId || DefaultDecrementClipCentsButtonId);
-      var incrementButton = document.getElementById(incrementClipCentsButtonId || DefaultIncrementClipCentsButtonId);
-      var span = document.getElementById(clipDollarsSpanId || DefaultClipDollarsSpanId);
+      var decrementButton = document.getElementById(DefaultDecrementClipCentsButtonId);
+      var incrementButton = document.getElementById(DefaultIncrementClipCentsButtonId);
+      var span = document.getElementById(DefaultClipDollarsSpanId);
 
       var syncAll;
       (syncAll = function(includeCallbacks) {
-        span.innerText = (_cents / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
+        span.innerText = (_cents / CentsPerDollar).toUSDString();
         decrementButton.disabled = _cents <= 1;
 
         if (includeCallbacks) {
-          _centsUpdatedCallbacks.forEach(function(callback) {
-            callback(_cents);
-          });
+          _centsUpdatedCallbacks.forEachCallback(_cents);
         }
       })(false);
 

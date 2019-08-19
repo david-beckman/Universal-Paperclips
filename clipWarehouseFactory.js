@@ -13,14 +13,10 @@ var clipWarehouseFactory = function(clipFactory, initial) {
     return clipFactory.getClips() - _shipped;
   };
 
-  var getUnshippedLocaleString = function() {
-    return getUnshipped().toLocaleString(undefined, {maximumFractionDigits: 0});
-  };
-
   var _span;
   var syncSpan = function() {
     if (!_span) return;
-    _span.innerText = getUnshippedLocaleString();
+    _span.innerText = getUnshipped().toLocaleString();
   };
 
   clipFactory.addClipsUpdatedCallback(function() {
@@ -29,29 +25,24 @@ var clipWarehouseFactory = function(clipFactory, initial) {
 
   return {
     getUnshipped: getUnshipped,
-    bind: function(save, unshippedClipsSpanId) {
-      if (save) _shippedUpdatedCallbacks.push(save);
-
+    bind: function() {
       const DefaultUnshippedClipsSpanId = "unshippedClipsSpan";
-      _span = document.getElementById(unshippedClipsSpanId || DefaultUnshippedClipsSpanId);
+      _span = document.getElementById(DefaultUnshippedClipsSpanId);
       syncSpan();
     },
     ship: function(amount) {
-      if (!amount || amount !== Math.floor(amount) || amount < 0) {
-        console.assert(false, "Cannot ship " + amount + " clips.");
+      if (!Number.isPositiveInteger(amount, "Clips to ship amount invalid: ")) {
         return false;
       }
 
       if (amount > getUnshipped()) {
-        console.assert(false, "Cannot ship more than are present: " + amount.toLocaleString() + " vs " + getUnshippedLocaleString());
+        console.assert(false, "Cannot ship more than are present: " + amount.toLocaleString() + " vs " + getUnshipped().toLocaleString());
         return false;
       }
 
       _shipped += amount;
       syncSpan();
-      _shippedUpdatedCallbacks.forEach(function(callback) {
-        callback(_shipped);
-      });
+      _shippedUpdatedCallbacks.forEachCallback(_shipped);
 
       return true;
     },

@@ -36,25 +36,20 @@ var clipMarketingFactory = function(accountant, initial) {
     getEffectiveness: function() {
       return _effectiveness;
     },
-    bind: function(save, incrementMarketingLevelButtonId, marketingLevelSpanId, marketingLevelDollarsSpanId) {
-      if (save) {
-        _levelUpdatedCallbacks.push(save);
-        _effectivenessUpdatedCallbacks.push(save);
-      }
-
+    bind: function() {
       const DefaultIncrementMarketingLevelButtonId = "incrementMarketingLevelButton";
       const DefaultmarketingLevelSpanId = "marketingLevelSpan";
       const DefaultMarketingLevelDollarsSpanId = "marketingLevelDollarsSpan";
 
-      _incrementLevelButton = document.getElementById(incrementMarketingLevelButtonId || DefaultIncrementMarketingLevelButtonId);
-      var levelSpan = document.getElementById(marketingLevelSpanId || DefaultmarketingLevelSpanId);
-      var dollarsSpan = document.getElementById(marketingLevelDollarsSpanId || DefaultMarketingLevelDollarsSpanId);
+      _incrementLevelButton = document.getElementById(DefaultIncrementMarketingLevelButtonId);
+      var levelSpan = document.getElementById(DefaultmarketingLevelSpanId);
+      var dollarsSpan = document.getElementById(DefaultMarketingLevelDollarsSpanId);
 
       var syncAll;
       (syncAll = function() {
         syncIncrementButtonDisabledFlag();
         levelSpan.innerText = _level.toLocaleString();
-        dollarsSpan.innerText = getDollars().toLocaleString(undefined, {style: "currency", currency: "USD"});
+        dollarsSpan.innerText = getDollars().toUSDString();
       })();
 
       _incrementLevelButton.onclick = function() {
@@ -66,22 +61,17 @@ var clipMarketingFactory = function(accountant, initial) {
         _level++;
         syncAll();
 
-        _levelUpdatedCallbacks.forEach(function(callback) {
-          callback(_level);
-        });
+        _levelUpdatedCallbacks.forEachCallback(_level);
         return true;
       };
     },
     enhance: function(percent) {
-      if (!percent || percent <= 0 || percent !== Math.floor(percent)) {
-        console.assert(false, "Invalid percent to enhance marketing: " + percent);
+      if (!Number.isPositiveInteger(percent, "Invalid percent to enhance marketing: ")) {
         return false;
       }
 
       _effectiveness *= (1 + percent / 100);
-      _effectivenessUpdatedCallbacks.forEach(function(callback) {
-        callback (_effectiveness);
-      });
+      _effectivenessUpdatedCallbacks.forEachCallback(_effectiveness);
 
       return true;
     },

@@ -6,7 +6,6 @@ var clipFactoryFactory = function(wireSupplier, initial) {
 
   const InitialClips = 0;
 
-  const TicksPerSecond = 1e3;
   const CPSInterval = TicksPerSecond;
 
   var _clips = (initial && initial.clips) || InitialClips;
@@ -26,25 +25,22 @@ var clipFactoryFactory = function(wireSupplier, initial) {
   });
 
   var make = function(amount) {
-    if (!amount || amount < 0 || amount !== Math.floor(amount)) {
-      console.assert("Invalid amount to make: " + amount);
-      return false;
+    if (!Number.isPositiveInteger(amount, "Invalid amount to make: ")) {
+      return 0;
     }
 
-    var amount = Math.min(Math.floor(wireSupplier.getLength()), amount);
-    if (!amount) return false;
+    var amount = Math.min(wireSupplier.getLength(), amount);
+    if (!amount) return 0;
 
     if (!wireSupplier.use(amount)) {
       console.warn("Insufficient wire to make a new clip.");
-      return false;
+      return 0;
     }
 
     _clips += amount;
     syncClipsSpan();
-    _clipsUpdatedCallbacks.forEach(function(callback) {
-      callback(_clips);
-    });
-    return true;
+    _clipsUpdatedCallbacks.forEachCallback(_clips);
+    return amount;
   };
 
   return {
@@ -52,16 +48,15 @@ var clipFactoryFactory = function(wireSupplier, initial) {
       return _clips;
     },
     make: make,
-    bind: function(save, clipsSpanId, makeClipButton, clipsPerSecondSpanId) {
-      if (save) _clipsUpdatedCallbacks.push(save);
-
+    bind: function() {
       const DefaultClipsSpanId = "clipsSpan";
       const DefaultMakeClipButtonId = "makeClipButton";
       const DefaultClipsPerSecondSpanId = "clipsPerSecondSpan";
 
-      _span = document.getElementById(clipsSpanId || DefaultClipsSpanId);
-      _button = document.getElementById(makeClipButton || DefaultMakeClipButtonId);
-      var cpsSpan = document.getElementById(clipsPerSecondSpanId || DefaultClipsPerSecondSpanId);
+      _span = document.getElementById(DefaultClipsSpanId);
+      _button = document.getElementById(DefaultMakeClipButtonId);
+      var cpsSpan = document.getElementById(DefaultClipsPerSecondSpanId);
+      cpsSpan.innerText = 0;
 
       syncClipsSpan();
 

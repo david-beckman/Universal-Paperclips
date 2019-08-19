@@ -26,7 +26,6 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   const MarketingPower = 1.1;
   const PricingFactor = 80;
   const SellInterval = 100;
-  const TicksPerSecond = 1e3;
   const DemandFactor = .7;
   const DemandPower = 1.15;
 
@@ -51,7 +50,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   var syncRevTracker = function() {
     var idealCPS = getIdealCPS();
     if (_cspsSpan) _cspsSpan.innerText = idealCPS.toLocaleString();
-    if (_rpsSpan) _rpsSpan.innerText = (idealCPS * clipPricer.getCents() / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
+    if (_rpsSpan) _rpsSpan.innerText = (idealCPS * clipPricer.getCents() / CentsPerDollar).toUSDString();
   };
 
   var syncSpans = function() {
@@ -112,10 +111,10 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   }, SellInterval);
 
   return {
-    bind: function(_, publicDemandPercentSpanId) {
+    bind: function() {
       const DefaultPublicDemandPercentSpanId = "publicDemandPercentSpan";
 
-      _demandSpan = document.getElementById(publicDemandPercentSpanId || DefaultPublicDemandPercentSpanId);
+      _demandSpan = document.getElementById(DefaultPublicDemandPercentSpanId);
 
       if (_revTrackerEnabled) {
         addRevTracker();

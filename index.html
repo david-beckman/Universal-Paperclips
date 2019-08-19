@@ -9,46 +9,49 @@
   <form action="." onsubmit="return false;">
     <div id="consoleDiv"></div>
     <div>
-      <h1>Paperclips: <span id="clipsSpan">{amount}</span></h1>
+      <h1>Paperclips: <span id="clipsSpan"></span></h1>
       <input type="button" id="makeClipButton" value="Make Paperclip" />
     </div>
     <div class="column">
       <div class="group">
         <h2>Business</h2>
         <div class="sub-group">
-          <div>Available Funds: <span id="availableDollarsSpan">{amount}</span></div>
-          <div>Unsold Inventory: <span id="unshippedClipsSpan">{amount}</span></div>
+          <div>Available Funds: <span id="availableDollarsSpan"></span></div>
+          <div>Unsold Inventory: <span id="unshippedClipsSpan"></span></div>
           <div>
             <input type="button" id="decrementClipCentsButton" value="lower" />
             <input type="button" id="incrementClipCentsButton" value="raise" />
-            Price per Clip: <span id="clipDollarsSpan">{amount}</span>
+            Price per Clip: <span id="clipDollarsSpan"></span>
           </div>
-        <div>Public Demand: <span id="publicDemandPercentSpan">{amount}</span></div>
+        <div>Public Demand: <span id="publicDemandPercentSpan"></span></div>
         </div>
         <div class="sub-group">
           <div>
             <input type="button" id="incrementMarketingLevelButton" value="Marketing" />
-            Level: <span id="marketingLevelSpan">{amount}</span>
+            Level: <span id="marketingLevelSpan"></span>
           </div>
-          <div>Cost: <span id="marketingLevelDollarsSpan">{amount}</span></div>
+          <div>Cost: <span id="marketingLevelDollarsSpan"></span></div>
         </div>
       </div>
       <div id="manufacturingGroupDiv" class="group">
         <h2>Manufacturing</h2>
         <div class="sub-group">
-          <div>Clips per Second: <span id="clipsPerSecondSpan">{amount}</span></div>
+          <div>Clips per Second: <span id="clipsPerSecondSpan"></span></div>
         </div>
         <div class="sub-group">
           <div>
             <input type="button" id="buyWireSpoolButton" value="Wire" />
-            <span id="wireLengthSpan">{amount}</span> inches
+            <span id="wireLengthSpan"></span> inches
           </div>
-          <div>Cost: <span id="wireSpoolDollarsSpan">{amount}</span></div>
+          <div>Cost: <span id="wireSpoolDollarsSpan"></span></div>
         </div>
       </div>
     </div>
     <div id="secondColumnDiv" class="column"></div>
   </form>
+  <script src="constants.js"></script>
+  <script src="Array.prototype.js"></script>
+  <script src="Number.prototype.js"></script>
   <script src="accountantFactory.js"></script>
   <script src="autoclipperFactoryFactory.js"></script>
   <script src="clipFactoryFactory.js"></script>

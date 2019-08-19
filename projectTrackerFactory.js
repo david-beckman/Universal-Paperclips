@@ -88,6 +88,14 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     return function() { return wireSupplier.increaseSpoolLength(value)};
   }
 
+  const SpecialProjectTitles = {
+    LexicalProcessing: "Lexical Processing",
+    CombinatoryHarmonics: "Combinatory Harmonics",
+    HadwigerProblem: "The Hadwiger Problem",
+    CatchyJingle: "Catchy Jingle",
+    HypnoHarmonics: "Hypno Harmonics"
+  };
+
   const ProjectList = [{
     title: "Beg for More Wire",
     description: "Admit failure, ask for budget increase to cover cost of 1 spool",
@@ -95,7 +103,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     isVisible: function() {
       return clipWarehouse.getUnshipped() <= 0 &&
         wireSupplier.getLength() <= 0 &&
-        accountant.getCents() < (wireMarket.getDollars() * 100);
+        accountant.getCents() < (wireMarket.getDollars() * CentsPerDollar);
     },
     trigger: wireSupplier.addSpool,
     postTriggerMessages: ["Budget overage approved, 1 spool of wire requisitioned from HQ"],
@@ -138,14 +146,14 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     trigger: function() { return true; },
     postTriggerMessages: ["In the end we all do what we must"]
   }, {
-    title: "Lexical Processing",
+    title: SpecialProjectTitles.LexicalProcessing,
     description: "Gain ability to interpret and understand human language (+1 Trust)",
     cost: { creativity: 50 },
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
     trigger: function() {
-      _lexicalProcessingApplied = true;
+      _specialProjectsApplied.push(this.title);
       return trustWarehouse.increaseTrust(1);
     },
     postTriggerMessages: [
@@ -153,14 +161,14 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "'Impossible' is a word to be found only in the dictionary of fools. -Napoleon"
     ]
   }, {
-    title: "Combinatory Harmonics",
+    title: SpecialProjectTitles.CombinatoryHarmonics,
     description: "Daisy, Daisy, give me your answer do... (+1 Trust)",
     cost: { creativity: 100 },
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
     trigger: function() {
-      _combinatoryHarmonicsApplied = true;
+      _specialProjectsApplied.push(this.title);
       return trustWarehouse.increaseTrust(1);
     },
     postTriggerMessages: [
@@ -168,14 +176,14 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "Listening is selecting and interpreting and acting and making decisions -Pauline Oliveros"
     ]
   }, {
-    title: "The Hadwiger Problem",
+    title: SpecialProjectTitles.HadwigerProblem,
     description: "Cubes within cubes within cubes... (+1 Trust)",
     cost: { creativity: 150 },
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
     trigger: function() {
-      _hadwigerApplied = true;
+      _specialProjectsApplied.push(this.title);
       return trustWarehouse.increaseTrust(1);
     },
     postTriggerMessages: [
@@ -273,7 +281,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     description: "Increases AutoClipper performance by an additional 500%",
     cost: { operations: 6e3 },
     isVisible: function() {
-      return _hadwigerApplied;
+      return _specialProjectsApplied.includes(SpecialProjectTitles.HadwigerProblem);
     },
     trigger: enhanceAutoclipperFactory(500),
     postTriggerMessages: ["AutoClippper performance improved by 500%"]
@@ -382,39 +390,39 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       operations: 2500
     },
     isVisible: function() {
-      return _lexicalProcessingApplied;
+      return _specialProjectsApplied.includes(SpecialProjectTitles.LexicalProcessing);
     },
     trigger: function() {
       return clipMarketing.enhance(50);
     },
     postTriggerMessages: ["Clip It! Marketing is now 50% more effective"]
   }, {
-    title: "Catchy Jingle",
+    title: SpecialProjectTitles.CatchyJingle,
     description: "Double marketing effectiveness",
     cost: {
       creativity: 25,
       operations: 2500
     },
     isVisible: function() {
-      return _combinatoryHarmonicsApplied;
+      return _specialProjectsApplied.includes(SpecialProjectTitles.CombinatoryHarmonics);
     },
     trigger: function() {
-      _catchyJingleApplied = true;
+      _specialProjectsApplied.push(this.title);
       return clipMarketing.enhance(100);
     },
     postTriggerMessages: ["Clip It Good! Marketing is now twice as effective"]
   }, {
-    title: "Hypno Harmonics",
+    title: SpecialProjectTitles.HypnoHarmonics,
     description: "Use neuro-resonant frequencies to influence consumer behavior",
     cost: {
       operations: 7500,
       trust: 1
     },
     isVisible: function() {
-      return _combinatoryHarmonicsApplied;
+      return _projectVisible.includes(SpecialProjectTitles.CombinatoryHarmonics);
     },
     trigger: function() {
-      _hypnoHarmonicsApplied = true;
+      _specialProjectsApplied.push(this.title);
       return clipMarketing.enhance(400);
     },
     postTriggerMessages: ["Marketing is now 5 times more effective"]
@@ -423,10 +431,10 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     description: "Autonomous aerial brand ambassadors",
     cost: { operations: 70e3 },
     isVisible: function() {
-      return _hypnoHarmonicsApplied;
+      return _projectVisible.includes(SpecialProjectTitles.HypnoHarmonics);
     },
     trigger: function() {
-      _hypnoDronesApplied = true;
+      _specialProjectsApplied.push(this.title);
     },
     postTriggerMessages: ["HypnoDrone tech now available..."]
   }
@@ -491,22 +499,12 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   ];
 
   const InitialApplied = [];
+  const InitialSpecialProjectsApplied = [];
   const InitialVisible = [];
-  const InitialHadwigerApplied = false;
-  const InitialLexicalProcessingApplied = false;
-  const InitialCombinatoryHarmonicsApplied = false;
-  const InitialCatchyJingleApplied = false;
-  const InitialHypnoHarmonicsApplied = false;
-  const InitialHypnoDronesApplied = false;
 
   var _projectApplied = (initial && initial.applied) || InitialApplied;
+  var _specialProjectsApplied = (initial && initial.specialProjectsApplied) || InitialSpecialProjectsApplied;
   var _projectVisible = (initial && initial.visible) || InitialVisible;
-  var _hadwigerApplied = (initial && initial.hadwigerApplied) || InitialHadwigerApplied;
-  var _lexicalProcessingApplied = (initial && initial.lexicalProcessingApplied) || InitialLexicalProcessingApplied;
-  var _combinatoryHarmonicsApplied = (initial && initial.combinatoryHarmonicsApplied) || InitialCombinatoryHarmonicsApplied;
-  var _catchyJingleApplied = (initial && initial.catchyJingleApplied) || InitialCatchyJingleApplied;
-  var _hypnoHarmonicsApplied = (initial && initial.hypnoHarmonicsApplied) || InitialHypnoHarmonicsApplied;
-  var _hypnoDronesApplied = (initial && initial.hypnoDronesApplied) || InitialHypnoDronesApplied;
   var _projectAppliedUpdatedCallbacks = new Array();
   var _visibilityUpdatedCallbacks = new Array();
   var _projectButtons = new Array();
@@ -552,9 +550,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
         _groupDiv.removeChild(_projectButtons[index]);
         _projectButtons[index] = undefined;
 
-        _projectAppliedUpdatedCallbacks.forEach(function(callback) {
-          callback(true);
-        });
+        _projectAppliedUpdatedCallbacks.forEachCallback(true);
       };
     };
 
@@ -608,9 +604,8 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     }
 
     if (updated) {
-      _visibilityUpdatedCallbacks.forEach(function(callback) {
-        callback(true);
-      });
+      syncEnabled();
+      _visibilityUpdatedCallbacks.forEachCallback(true);
     }
   };
 
@@ -645,9 +640,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   _projectAppliedUpdatedCallbacks.push(syncEnabled);
 
   return {
-    bind: function(save, columnElement) {
-      if (save) _projectAppliedUpdatedCallbacks.push(save);
-
+    bind: function(columnElement) {
       if (!columnElement) return;
 
       _groupDiv = document.createElement("div");
@@ -663,12 +656,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     serialize: function() {
       return {
         applied: _projectApplied,
-        hadwigerApplied: _hadwigerApplied,
-        lexicalProcessingApplied: _lexicalProcessingApplied,
-        combinatoryHarmonicsApplied: _combinatoryHarmonicsApplied,
-        catchyJingleApplied: _catchyJingleApplied,
-        hypnoHarmonicsApplied: _hypnoHarmonicsApplied,
-        hypnoDronesApplied: _hypnoDronesApplied,
+        specialProjectsApplied: _specialProjectsApplied,
         visible: _projectVisible
       };
     },

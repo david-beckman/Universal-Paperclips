@@ -13,7 +13,6 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
   const ProcessorPower = 1.1
   const CreativityInterval = 10;
   const SpeedFactor = 1/4;
-  const TicksPerSecond = 1e3;
 
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _creativity = (initial && initial.creativity) || InitialCreativity;
@@ -40,10 +39,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
   };
 
   var isValidAmount = function(amount) {
-    if ((amount || amount === 0) && amount >= 0 && amount === Math.floor(amount)) return true;
-
-    console.assert(false, "Amount is invalid: " + amount);
-    return false;
+    return Number.isPositiveInteger(amount, "Creativity amount is invalid: ");
   };
 
   var remainder = 0;
@@ -60,9 +56,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
       _creativity += creativity;
       syncSpan();
 
-      _creativityUpdatedCallbacks.forEach(function(callback) {
-        callback(_creativity);
-      });
+      _creativityUpdatedCallbacks.forEachCallback(_creativity);
     }
   }, CreativityInterval);
 
@@ -71,9 +65,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
       _enabled = true;
       create();
 
-      _enabledUpdatedCallbacks.forEach(function(callback) {
-        callback(true);
-      });
+      _enabledUpdatedCallbacks.forEachCallback(true);
     },
     canConsume: function(amount) {
       return isValidAmount(amount) && amount <= _creativity;
@@ -88,21 +80,14 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
 
       _creativity -= amount;
       syncSpan();
-      _creativityUpdatedCallbacks.forEach(function(callback) {
-        callback(_creativity);
-      });
+      _creativityUpdatedCallbacks.forEachCallback(_creativity);
 
       return true;
     },
     isEnabled: function() {
       return _enabled;
     },
-    bind: function(save, subgroupDiv) {
-      if (save) {
-        _enabledUpdatedCallbacks.push(save);
-        _creativityUpdatedCallbacks.push(save);
-      }
-
+    bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
       _subgroupDiv = subgroupDiv;

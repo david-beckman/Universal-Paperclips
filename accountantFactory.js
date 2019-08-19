@@ -8,7 +8,7 @@ var accountantFactory = function(initial) {
   var _span;
 
   var getDollarsLocaleString = function() {
-    return (_cents / 100).toLocaleString(undefined, {style: "currency", currency: "USD"});
+    return (_cents / CentsPerDollar).toUSDString();
   };
 
   var syncSpan = function() {
@@ -17,14 +17,11 @@ var accountantFactory = function(initial) {
   };
 
   var getCents = function(dollars) {
-    return dollars && dollars * 100;
+    return dollars && dollars * CentsPerDollar;
   };
 
   var isValidCents = function(cents, source) {
-    if ((cents || cents === 0) && cents >= 0 && cents === Math.floor(cents)) return true;
-
-    console.assert(false, "Amount in cents is invalid for a " + source + ": " + cents);
-    return false;
+    return Number.isPositiveInteger(cents, "Amount in cents is invalid for a " + source + ": ");
   };
 
   var canDebitCents = function(cents) {
@@ -37,15 +34,13 @@ var accountantFactory = function(initial) {
     if (!isValidCents(cents, "credit")) return false;
 
     if (cents > _cents) {
-      console.warn("Insufficient funds (" + getDollarsLocaleString() + ") to debit " + (cents / 100).toLocaleString(undefined, {style: "currency", currency: "USD"}));
+      console.warn("Insufficient funds (" + getDollarsLocaleString() + ") to debit " + (cents / CentsPerDollar).toUSDString());
       return false;
     }
 
     _cents -= cents;
     syncSpan();
-    _centsUpdatedCallbacks.forEach(function(callback) {
-      callback(_cents);
-    });
+    _centsUpdatedCallbacks.forEachCallback(_cents);
     return true;
   };
 
@@ -53,11 +48,9 @@ var accountantFactory = function(initial) {
     getCents: function() {
       return _cents;
     },
-    bind: function(save, availableDollarsSpanId) {
-      if (save) _centsUpdatedCallbacks.push(save);
-
+    bind: function() {
       const DefaultAvailableDollarsSpanId = "availableDollarsSpan";
-      _span = document.getElementById(availableDollarsSpanId || DefaultAvailableDollarsSpanId);
+      _span = document.getElementById(DefaultAvailableDollarsSpanId);
       syncSpan();
     },
     creditCents: function(cents) {
@@ -65,9 +58,7 @@ var accountantFactory = function(initial) {
 
       _cents += cents;
       syncSpan();
-      _centsUpdatedCallbacks.forEach(function(callback) {
-        callback(_cents);
-      });
+      _centsUpdatedCallbacks.forEachCallback(_cents);
 
       return true;
     },
