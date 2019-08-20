@@ -48,6 +48,7 @@
       </div>
     </div>
     <div id="secondColumnDiv" class="column"></div>
+    <div id="thirdColumnDiv" class="column"></div>
   </form>
   <script src="constants.js"></script>
   <script src="Array.prototype.js"></script>
@@ -78,7 +79,7 @@
 var makeClipButton = document.getElementById("makeClipButton");
 for (var i=0; i<20; i++) setTimeout(() => {makeClipButton.click();}, i);
 
-const targetWirePrice = 15;
+var targetWirePrice = 15;
 
 var wireSpoolDollarsSpan = document.getElementById("wireSpoolDollarsSpan");
 var getWireSpoolDollars = () => { return parseInt(wireSpoolDollarsSpan.innerText.substring(1).replace(/,/g, "")); };
@@ -86,6 +87,7 @@ var buyWireSpoolButton = document.getElementById("buyWireSpoolButton");
 var wireLengthSpan = document.getElementById("wireLengthSpan");
 var getWireLength = () => { return parseInt(wireLengthSpan.innerText.replace(/,/g, "")); };
 var autoWireBuyer = () => {
+  // TODO: Turn off with wire buyer
   if (getWireSpoolDollars() > targetWirePrice && getWireLength() > 0) return;
   if (!buyWireSpoolButton.disabled) {
     buyWireSpoolButton.click();
@@ -103,6 +105,7 @@ var getClipDollars = () => { return parseFloat(clipDollarsSpan.innerText.substri
 var createClipperButton, clipperDollarsSpan;
 var getClipperDollars = () => { return clipperDollarsSpan ? parseFloat(clipperDollarsSpan.innerText.substring(1).replace(/,/g, "")) : 0; };
 setInterval(() => {
+  // TODO: switch to megaclippers when available
   if (!createClipperButton) createClipperButton = document.getElementById("createClipperButton");
   if (!clipperDollarsSpan) clipperDollarsSpan = document.getElementById("clipperDollarsSpan");
 
@@ -112,4 +115,26 @@ setInterval(() => {
   var assets = theoreticalClips * getClipDollars() + getAvailableDollars();
   if ((targetWirePrice + getClipperDollars()) <= assets) createClipperButton.click();
 }, 100);
+
+var processorsButton;
+var processorsSpan;
+var memoryButton;
+var memorySpan;
+var spendTrust = () => {
+  if (!(!processorsButton && !(processorsButton = document.getElementById("processorsButton"))) && processorsButton.disabled) return;
+  if (!processorsSpan && !(processorsSpan = document.getElementById("processorsSpan"))) return;
+  if (!(!memoryButton && !(memoryButton = document.getElementById("memoryButton"))) && memoryButton.disabled) return;
+  if (!memorySpan && !(memorySpan = document.getElementById("memorySpan"))) return;
+
+  var memory = parseInt(memorySpan.innerText);
+  var processors = parseInt(processorsSpan.innerText);
+  var appliedTrust = memory + processors
+
+  var targetPercent = memory >= 70 ? .5 : .7;
+  var button = memory >= (appliedTrust * targetPercent) ? processorsButton : memoryButton;
+  button.click();
+
+  setTimeout(spendTrust, 1);
+};
+setInterval(spendTrust, 100);
 -->

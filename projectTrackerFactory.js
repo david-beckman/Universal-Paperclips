@@ -96,7 +96,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     HypnoHarmonics: "Hypno Harmonics"
   };
 
-  const ProjectList = [{
+  const ProjectList = [{ // 0
     title: "Beg for More Wire",
     description: "Admit failure, ask for budget increase to cover cost of 1 spool",
     cost: { trust: 1 },
@@ -108,7 +108,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     trigger: wireSupplier.addSpool,
     postTriggerMessages: ["Budget overage approved, 1 spool of wire requisitioned from HQ"],
     disableAppliedTracking: true
-  }, {
+  }, { // 1
     title: "Creativity",
     description: "Use idle operations to generate new problems and new solutions",
     cost: { operations: 1e3 },
@@ -117,7 +117,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: creativityStorage.enable,
     postTriggerMessages: ["Creativity unlocked (creativity increases while operations are at max)"]
-  }, {
+  }, { // 2
     title: "Xavier Re-initialization",
     description: "Re-allocate accumulated trust",
     cost: { creativity: 1e5 },
@@ -127,7 +127,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     trigger: cpu.clear,
     postTriggerMessages: ["Trust now available for re-allocation"],
     disableAppliedTracking: true
-  }, {
+  }, { // 3
     title: "Limerick",
     description: "Algorithmically-generated poem (+1 Trust)",
     cost: { creativity: 10 },
@@ -136,7 +136,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: incrementTrustFactory(1),
     postTriggerMessages: ["There was an AI made of dust, whose poetry gained it man's trust..."]
-  }, {
+  }, { // 4
     title: "Limerick (cont.)",
     description: "If is follows ought, it'll do what they thought",
     cost: { creativity: 1e6 },
@@ -145,7 +145,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: function() { return true; },
     postTriggerMessages: ["In the end we all do what we must"]
-  }, {
+  }, { // 5
     title: SpecialProjectTitles.LexicalProcessing,
     description: "Gain ability to interpret and understand human language (+1 Trust)",
     cost: { creativity: 50 },
@@ -160,7 +160,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "Lexical Processing online, TRUST INCREASED",
       "'Impossible' is a word to be found only in the dictionary of fools. -Napoleon"
     ]
-  }, {
+  }, { // 6
     title: SpecialProjectTitles.CombinatoryHarmonics,
     description: "Daisy, Daisy, give me your answer do... (+1 Trust)",
     cost: { creativity: 100 },
@@ -175,7 +175,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "Combinatory Harmonics mastered, TRUST INCREASED",
       "Listening is selecting and interpreting and acting and making decisions -Pauline Oliveros"
     ]
-  }, {
+  }, { // 7
     title: SpecialProjectTitles.HadwigerProblem,
     description: "Cubes within cubes within cubes... (+1 Trust)",
     cost: { creativity: 150 },
@@ -190,7 +190,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "The Hadwiger Problem: solved, TRUST INCREASED",
       "Architecture is the thoughtful making of space. -Louis Kahn"
     ]
-  }, {
+  }, { // 8
     title: "The Tóth Sausage Conjecture",
     description: "Tubes within tubes within tubes... (+1 Trust)",
     cost: { creativity: 200 },
@@ -202,7 +202,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "The Tóth Sausage Conjecture: proven, TRUST INCREASED",
       "You can't invent a design. You recognize it, in the fourth dimension. -D.H. Lawrence"
     ]
-  }, {
+  }, { // 9
     title: "Donkey Space",
     description: "I think you think I think you think I think you think I think... (+1 Trust)",
     cost: { creativity: 250 },
@@ -214,7 +214,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "Donkey Space: mapped, TRUST INCREASED",
       "Every commercial transaction has within itself an element of trust. - Kenneth Arrow"
     ]
-  }, {
+  }, { // 10
     title: "Cure for Cancer",
     description: "The trick is tricking cancer into curing itself. (+10 Trust)",
     cost: { operations: 2500 },
@@ -230,7 +230,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       return trustWarehouse.increaseTrust(10);
     },
     postTriggerMessages: ["Cancer is cured, +10 TRUST, global stock prices trending upward"]
-  }, {
+  }, { // 11
     title: "Male Pattern Baldness",
     description: "A cure for androgenetic alopecia. (+20 Trust)",
     cost: { operations: 20e3 },
@@ -249,7 +249,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       "Male pattern baldness cured, +20 TRUST, Global stock prices trending upward",
       "They are still monkeys"
     ]
-  }, {
+  }, { // 12
     title: "Improved AutoClippers",
     description: "Increases AutoClipper performance 25%",
     cost: { operations: 750 },
@@ -258,7 +258,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: enhanceAutoclipperFactory(25),
     postTriggerMessages: ["AutoClippper performance boosted by 25%"]
-  }, {
+  }, { // 13
     title: "Even Better AutoClippers",
     description: "Increases AutoClipper performance by an additional 50%",
     cost: { operations: 2500 },
@@ -267,7 +267,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: enhanceAutoclipperFactory(50),
     postTriggerMessages: ["AutoClippper performance boosted by another 50%"]
-  }, {
+  }, { // 14
     title: "Optimized AutoClippers",
     description: "Increases AutoClipper performance by an additional 75%",
     cost: { operations: 5e3 },
@@ -276,7 +276,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: enhanceAutoclipperFactory(75),
     postTriggerMessages: ["AutoClippper performance boosted by another 75%"]
-  }, {
+  }, { // 15
     title: "Hadwiger Clip Diagrams",
     description: "Increases AutoClipper performance by an additional 500%",
     cost: { operations: 6e3 },
@@ -285,7 +285,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: enhanceAutoclipperFactory(500),
     postTriggerMessages: ["AutoClippper performance improved by 500%"]
-  }, {
+  }, { // 16
     title: "Improved Wire Extrusion",
     description: "50% more wire supply from every spool",
     cost: { operations: 1750 },
@@ -294,7 +294,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: increaseWireSpoolLengthFactory(50),
     postTriggerMessages: ["Wire extrusion technique improved, 1,500 supply from every spool"]
-  }, {
+  }, { // 17
     title: "Optimized Wire Extrusion",
     description: "75% more wire supply from every spool",
     cost: { operations: 3500 },
@@ -303,7 +303,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: increaseWireSpoolLengthFactory(75),
     postTriggerMessages: ["Wire extrusion technique improved, 2,625 supply from every spool"]
-  }, {
+  }, { // 18
     title: "Microlattice Shapecasting",
     description: "100% more wire supply from every spool",
     cost: { operations: 7500 },
@@ -312,7 +312,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: increaseWireSpoolLengthFactory(100),
     postTriggerMessages: ["Using microlattice shapecasting techniques we now get 5,250 supply from every spool"]
-  }, {
+  }, { // 19
     title: "Spectral Froth Annealment",
     description: "200% more wire supply from every spool",
     cost: { operations: 12e3 },
@@ -321,7 +321,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: increaseWireSpoolLengthFactory(200),
     postTriggerMessages: ["Using spectral froth annealment we now get 15,750 supply from every spool"]
-  }, {
+  }, { // 20
     title: "Quantum Foam Annealment",
     description: "1,000% more wire supply from every spool",
     cost: { operations: 15e3 },

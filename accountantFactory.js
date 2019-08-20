@@ -40,7 +40,7 @@ var accountantFactory = function(initial) {
 
     _cents -= cents;
     syncSpan();
-    _centsUpdatedCallbacks.forEachCallback(_cents);
+    _centsUpdatedCallbacks.forEachCallback(_cents, true); // In the wire-buyer loop
     return true;
   };
 
@@ -58,7 +58,7 @@ var accountantFactory = function(initial) {
 
       _cents += cents;
       syncSpan();
-      _centsUpdatedCallbacks.forEachCallback(_cents);
+      _centsUpdatedCallbacks.forEachCallback(_cents, true); // In the wire-buyer loop
 
       return true;
     },

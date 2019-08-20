@@ -80,9 +80,9 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
       return false;
     }
 
+    wireSupplier.addSpool();
     _purchases++;
     _purchasesUpdatedCallbacks.forEachCallback(_purchases);
-    wireSupplier.addSpool();
 
     _baseDollars += DollarsIncreaseAmount;
     resetNextReductionTimestamp();
@@ -90,8 +90,8 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
     return true;
   };
 
-  var autoBuy = function(length) {
-    if (!_wireBuyerRunning || length) return;
+  var autoBuy = function() {
+    if (!_wireBuyerRunning || wireSupplier.getLength() || !accountant.canDebitDollars(_dollars)) return;
     buyWire();
   };
 
@@ -118,11 +118,12 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
       _wireBuyerRunning = !_wireBuyerRunning;
       syncSpan();
 
-      autoBuy(wireSupplier.getLength());
+      autoBuy();
     };
   };
 
   wireSupplier.addLengthUpdatedCallback(autoBuy);
+  accountant.addCentsUpdatedCallback(autoBuy);
 
   return {
     getDollars: function() {

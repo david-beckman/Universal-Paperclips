@@ -21,7 +21,7 @@ var cpuFactory = function(trustWarehouse, initial) {
   var _memoryUpdatedCallbacks = new Array();
 
   var _processorButton;
-  var _processorSpan;
+  var _processorsSpan;
   var _memoryButton;
   var _memorySpan;
 
@@ -36,7 +36,7 @@ var cpuFactory = function(trustWarehouse, initial) {
   };
 
   var syncAll = function() {
-    if (_processorSpan) _processorSpan.innerText = _processors.toLocaleString();
+    if (_processorsSpan) _processorsSpan.innerText = _processors.toLocaleString();
     if (_memorySpan) _memorySpan.innerText = _memory.toLocaleString();
     syncButtonsDisabledFlags();
   };
@@ -69,6 +69,7 @@ var cpuFactory = function(trustWarehouse, initial) {
 
       var processorsDiv = document.createElement("div");
       _processorButton = document.createElement("input");
+      _processorButton.id = "processorsButton";
       _processorButton.type = "button";
       _processorButton.className = "cpu-button";
       _processorButton.value = "Processors";
@@ -84,11 +85,13 @@ var cpuFactory = function(trustWarehouse, initial) {
       };
       processorsDiv.appendChild(_processorButton);
       processorsDiv.appendChild(document.createTextNode(" "));
-      processorsDiv.appendChild(_processorSpan = document.createElement("span"));
+      processorsDiv.appendChild(_processorsSpan = document.createElement("span"));
+      _processorsSpan.id = "processorsSpan";
       subgroupDiv.appendChild(processorsDiv);
 
       var memoryDiv = document.createElement("div");
       _memoryButton = document.createElement("input");
+      _memoryButton.id = "memoryButton";
       _memoryButton.type = "button";
       _memoryButton.className = "cpu-button";
       _memoryButton.value = "Memory";
@@ -105,6 +108,7 @@ var cpuFactory = function(trustWarehouse, initial) {
       memoryDiv.appendChild(_memoryButton);
       memoryDiv.appendChild(document.createTextNode(" "));
       memoryDiv.appendChild(_memorySpan = document.createElement("span"));
+      _memorySpan.id = "memorySpan";
       subgroupDiv.appendChild(memoryDiv);
 
       syncAll();
