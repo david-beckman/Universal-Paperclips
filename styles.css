@@ -57,8 +57,34 @@ body {
   margin-bottom: 1em;
 }
 
+.sub-group h3 {
+  margin: 0;
+}
+
+.outlined {
+  border: 1px solid black;
+  padding: .5em;
+}
+
 .cpu-button {
   width: 7em;
+}
+
+.chip {
+  background-color: black;
+  display: inline-block;
+  width: 1.6em;
+  height: 1.6em;
+  margin: .1em;
+}
+
+.fadable {
+  opacity: 1;
+  transition: opacity 10s ease-in;
+}
+
+.fade-out {
+  opacity: 0;
 }
 
 .project-button {

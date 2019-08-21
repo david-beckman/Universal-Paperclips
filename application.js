@@ -3,7 +3,7 @@
   const SaveInterval = 10e3; // 10s
 
   var accountant, autoclipperFactory, clipFactory, clipMarketing, clipPricer, clipSeller, clipWarehouse, computer, consoleAppender, cpu,
-    creativityStorage, megaClipperFactory, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, wireMarket, wireSupplier;
+    creativityStorage, megaClipperFactory, milestoneTracker, operationsStorage, projectTracker, quantumComputer, trustWarehouse, wireMarket, wireSupplier;
 
   setInterval(function() {
     localStorage.setItem(SaveName, JSON.stringify({
@@ -22,6 +22,7 @@
       milestoneTracker: milestoneTracker.serialize(),
       operationsStorage: operationsStorage.serialize(),
       projectTracker: projectTracker.serialize(),
+      quantumComputer: quantumComputer.serialize(),
       trustWarehouse: trustWarehouse.serialize(),
       wireMarket: wireMarket.serialize(),
       wireSupplier: wireSupplier.serialize()
@@ -57,13 +58,16 @@
 
   // Level 5 ...
   (creativityStorage = creativityStorageFactory(cpu, operationsStorage, savedGame.creativityStorage)).bind();
+  (quantumComputer = quantumComputerFactory(operationsStorage, savedGame.quantumComputer)).bind();
 
   // Level 6 ...
   (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
-      creativityStorage, megaClipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker))
+      creativityStorage, megaClipperFactory, operationsStorage, quantumComputer, trustWarehouse, wireMarket, wireSupplier,
+      savedGame.projectTracker))
     .bind();
 
   // Level 7 ...
-  (computer = computerFactory(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse,
-    savedGame.computer)).bind();
+  (computer = computerFactory(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, quantumComputer,
+      trustWarehouse, savedGame.computer))
+    .bind();
 })();

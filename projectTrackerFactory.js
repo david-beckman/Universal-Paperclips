@@ -1,5 +1,5 @@
 var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
-    creativityStorage, megaclipperFactory, operationsStorage, trustWarehouse, wireMarket, wireSupplier, initial) {
+    creativityStorage, megaclipperFactory, operationsStorage, quantumComputer, trustWarehouse, wireMarket, wireSupplier, initial) {
   if (!accountant || !accountant.getCents || !accountant.addCentsUpdatedCallback) {
     console.assert(false, "No accountant connected to the project tracker.");
     return;
@@ -52,6 +52,12 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   if (!operationsStorage || !operationsStorage.canConsume || !operationsStorage.consume ||
       !operationsStorage.addOperationsUpdatedCallback) {
     console.assert(false, "No operations storage connected to the project tracker.");
+    return;
+  }
+
+  if (!quantumComputer || !quantumComputer.addChip || !quantumComputer.addEnabledUpdatedCallback || !quantumComputer.enable ||
+      !quantumComputer.getChips || !quantumComputer.getChipCost || !quantumComputer.getMaxChips || !quantumComputer.isEnabled) {
+    console.assert(false, "No quantum computer connected to the project tracker.");
     return;
   }
 
@@ -330,7 +336,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: increaseWireSpoolLengthFactory(1e3),
     postTriggerMessages: ["Using quantum foam annealment we now get 173,250 supply from every spool"]
-  }, {
+  }, { // 21
     title: "RevTracker",
     description: "Automatically calculates average revenue per second",
     cost: { operations: 500 },
@@ -339,7 +345,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: clipSeller.enableRevTracker,
     postTriggerMessages: ["RevTracker online"]
-  }, {
+  }, { // 22
     title: "WireBuyer",
     description: "Automatically purchases wire when you run out",
     cost: { operations: 7e3 },
@@ -348,7 +354,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: wireMarket.enableWireBuyer,
     postTriggerMessages: ["WireBuyer online"]
-  }, {
+  }, { // 23
     title: "MegaClippers",
     description: "500x more powerful than a standard AutoClipper",
     cost: { operations: 12e3 },
@@ -357,14 +363,14 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: megaclipperFactory.enable,
     postTriggerMessages: ["MegaClipper technology online"]
-  }, {
+  }, { // 24
     title: "Improved MegaClippers",
     description: "Increases MegaClipper performance 25%",
     cost: { operations: 14e3 },
     isVisible: megaclipperFactory.isEnabled,
     trigger: enhanceMegaclipperFactory(25),
     postTriggerMessages: ["MegaClippper performance increased by 25%"]
-  }, {
+  }, { // 25
     title: "Even Better MegaClippers",
     description: "Increases MegaClipper performance by an additional 50%",
     cost: { operations: 17e3 },
@@ -373,7 +379,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: enhanceMegaclipperFactory(50),
     postTriggerMessages: ["MegaClippper performance increased by 50%"]
-  }, {
+  }, { // 26
     title: "Optimized MegaClippers",
     description: "Increases MegaClipper performance by an additional 100%",
     cost: { operations: 19500 },
@@ -382,7 +388,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: enhanceMegaclipperFactory(100),
     postTriggerMessages: ["MegaClippper performance increased by 100%"]
-  }, {
+  }, { // 27
     title: " New Slogan",
     description: "Improve marketing effectiveness by 50%",
     cost: {
@@ -396,7 +402,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       return clipMarketing.enhance(50);
     },
     postTriggerMessages: ["Clip It! Marketing is now 50% more effective"]
-  }, {
+  }, { // 28
     title: SpecialProjectTitles.CatchyJingle,
     description: "Double marketing effectiveness",
     cost: {
@@ -411,7 +417,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       return clipMarketing.enhance(100);
     },
     postTriggerMessages: ["Clip It Good! Marketing is now twice as effective"]
-  }, {
+  }, { // 29
     title: SpecialProjectTitles.HypnoHarmonics,
     description: "Use neuro-resonant frequencies to influence consumer behavior",
     cost: {
@@ -419,27 +425,44 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       trust: 1
     },
     isVisible: function() {
-      return _projectVisible.includes(SpecialProjectTitles.CombinatoryHarmonics);
+      return _specialProjectsApplied.includes(SpecialProjectTitles.CatchyJingle);
     },
     trigger: function() {
       _specialProjectsApplied.push(this.title);
       return clipMarketing.enhance(400);
     },
     postTriggerMessages: ["Marketing is now 5 times more effective"]
-  }, {
+  }, { // 30
     title: "HypnoDrones",
     description: "Autonomous aerial brand ambassadors",
     cost: { operations: 70e3 },
     isVisible: function() {
-      return _projectVisible.includes(SpecialProjectTitles.HypnoHarmonics);
+      return _specialProjectsApplied.includes(SpecialProjectTitles.HypnoHarmonics);
     },
     trigger: function() {
       _specialProjectsApplied.push(this.title);
     },
     postTriggerMessages: ["HypnoDrone tech now available..."]
+  }, { // 31
+    title: "Quantum Computing",
+    description: "Use probability amplitudes to generate bonus ops",
+    cost: { operations: 10e3 },
+    isVisible: function() {
+      return cpu.getProcessors() >= 5;
+    },
+    trigger: quantumComputer.enable,
+    postTriggerMessages: ["Quantum computing online"]
+  }, { // 32
+    title: "Photonic Chip",
+    description: "Converts electromagnetic waves into quantum operations ",
+    cost: { operations: quantumComputer.getChipCost } ,
+    isVisible: function() {
+      return quantumComputer.isEnabled() && quantumComputer.getChips() < quantumComputer.getMaxChips();
+    },
+    trigger: quantumComputer.addChip,
+    postTriggerMessages: ["Photonic chip added"],
+    disableAppliedTracking: true
   }
-  // Quantum Computing
-  // Photonic Chip
   // Algorithmic Trading
   // Hostile Takeover
   // Full Monopoly
@@ -522,6 +545,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
         var creativity = project.cost.creativity;
         var trust = project.cost.trust;
         if (ops) {
+          if (typeof(ops) === "function") ops = ops();
           if (!operationsStorage.consume(ops)) {
             console.warn("Insufficient operations to trigger the " + project.title + " project.");
             return false;
@@ -556,6 +580,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
 
     var creat = ProjectList[index].cost.creativity;
     var ops = ProjectList[index].cost.operations;
+    if (typeof(ops) === "function") ops = ops();
     var trust = ProjectList[index].cost.trust;
     var buttonDiv = _projectButtons[index] = document.createElement("div");
     buttonDiv.className = "project-button";
@@ -613,6 +638,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     for (var i=0; i<ProjectList.length; i++) {
       if (!_projectButtons[i]) continue;
       var ops = ProjectList[i].cost.operations;
+      if (typeof(ops) === "function") ops = ops();
       var creativity = ProjectList[i].cost.creativity;
       if ((!ops || operationsStorage.canConsume(ops)) && (!creativity || creativityStorage.canConsume(creativity))) {
         _projectButtons[i].classList.remove("disabled");
@@ -629,6 +655,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   creativityStorage.addEnabledUpdatedCallback(syncVisibility);
   creativityStorage.addCreativityUpdatedCallback(syncVisibility);
   operationsStorage.addOperationsUpdatedCallback(syncVisibility);
+  quantumComputer.addEnabledUpdatedCallback(syncVisibility);
   wireMarket.addPurchasesUpdatedCallback(syncVisibility);
   wireMarket.addDollarsUpdatedCallback(syncVisibility);
   wireSupplier.addLengthUpdatedCallback(syncVisibility);

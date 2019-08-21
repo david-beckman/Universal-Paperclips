@@ -1,4 +1,4 @@
-var computerFactory = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, trustWarehouse, _) {
+var computerFactory = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, quantumComputer, trustWarehouse, _) {
   if (!consoleAppender || !consoleAppender.append) {
     console.assert(false, "No console appender connected to the computer.");
     return;
@@ -26,6 +26,11 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
 
   if (!projectTracker || !projectTracker.bind || !projectTracker.addProjectVisibilityUpdatedCallback) {
     console.assert(false, "No project tracker connected to the computer.");
+    return;
+  }
+
+  if (!quantumComputer || !quantumComputer.bind) {
+    console.assert(false, "No quantum module connected to the computer.");
     return;
   }
 
@@ -75,6 +80,8 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
     operationsStorage.bind(operationsDiv);
     creativityStorage.bind(operationsDiv);
     group.appendChild(operationsDiv);
+
+    quantumComputer.bind(group);
 
     projectTracker.bind(_div);
 
