@@ -137,9 +137,9 @@ var operationsStorageFactory = function(cpu, initial) {
       if (!subgroupDiv) return;
 
       var operationsDiv = document.createElement("div");
-      operationsDiv.appendChild(document.createTextNode("Operations: "));
+      operationsDiv.appendText("Operations: ");
       operationsDiv.appendChild(_operationsSpan = document.createElement("span"));
-      operationsDiv.appendChild(document.createTextNode(" / "));
+      operationsDiv.appendText(" / ");
       operationsDiv.appendChild(_maxSpan = document.createElement("span"));
       subgroupDiv.appendChild(operationsDiv);
 

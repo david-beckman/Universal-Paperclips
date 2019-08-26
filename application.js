@@ -3,7 +3,8 @@
   const SaveInterval = 10e3; // 10s
 
   var accountant, autoclipperFactory, clipFactory, clipMarketing, clipPricer, clipSeller, clipWarehouse, computer, consoleAppender, cpu,
-    creativityStorage, megaClipperFactory, milestoneTracker, operationsStorage, projectTracker, quantumComputer, trustWarehouse, wireMarket, wireSupplier;
+    creativityStorage, megaClipperFactory, milestoneTracker, operationsStorage, projectTracker, quantumComputer, stockMarket, stockTrader,
+    trustWarehouse, wireMarket, wireSupplier;
 
   setInterval(function() {
     localStorage.setItem(SaveName, JSON.stringify({
@@ -23,6 +24,8 @@
       operationsStorage: operationsStorage.serialize(),
       projectTracker: projectTracker.serialize(),
       quantumComputer: quantumComputer.serialize(),
+      stockMarket: stockMarket.serialize(),
+      stockTrader: stockTrader.serialize(),
       trustWarehouse: trustWarehouse.serialize(),
       wireMarket: wireMarket.serialize(),
       wireSupplier: wireSupplier.serialize()
@@ -35,12 +38,14 @@
   (accountant = accountantFactory(savedGame.accountant)).bind();
   (clipPricer = clipPricerFactory(savedGame.clipPricer)).bind();
   (consoleAppender = consoleAppenderFactory(savedGame.consoleAppender)).bind();
+  (stockMarket = stockMarketFactory(savedGame.stockMarket)).bind();
   (trustWarehouse = trustWarehouseFactory(savedGame.trustWarehouse)).bind();
   (wireSupplier = wireSupplierFactory(savedGame.wireSupplier)).bind();
 
   // Level 1: Only level 0 dependencies
   (clipFactory = clipFactoryFactory(wireSupplier, savedGame.clipFactory)).bind();
   (clipMarketing = clipMarketingFactory(accountant, savedGame.clipMarketing)).bind();
+  (stockTrader = stockTraderFactory(accountant, consoleAppender, stockMarket, savedGame.stockTrader)).bind();
   (wireMarket = wireMarketFactory(accountant, wireSupplier, savedGame.wireMarket)).bind();
 
   // Level 2: At least one level 1 dependency
@@ -62,8 +67,8 @@
 
   // Level 6 ...
   (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
-      creativityStorage, megaClipperFactory, operationsStorage, quantumComputer, trustWarehouse, wireMarket, wireSupplier,
-      savedGame.projectTracker))
+      creativityStorage, megaClipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader, trustWarehouse, wireMarket,
+      wireSupplier, savedGame.projectTracker))
     .bind();
 
   // Level 7 ...

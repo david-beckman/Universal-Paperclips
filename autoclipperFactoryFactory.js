@@ -79,13 +79,13 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
     syncButtonDisabledFlag();
     inputLine.appendChild(_button);
 
-    inputLine.appendChild(document.createTextNode(" "));
+    inputLine.appendText(" ");
     inputLine.appendChild(_clippersSpan = document.createElement("span"));
 
     var costLine = document.createElement("div");
     subgroup.appendChild(costLine);
 
-    costLine.appendChild(document.createTextNode("Cost: "));
+    costLine.appendText("Cost: ");
     costLine.appendChild(_dollarsSpan = document.createElement("span"));
     _dollarsSpan.id = "clipperDollarsSpan";
 

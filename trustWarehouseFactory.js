@@ -40,7 +40,7 @@ var trustWarehouseFactory = function(initial) {
       if (!subgroupDiv) return;
 
       var trustDiv = document.createElement("div");
-      trustDiv.appendChild(document.createTextNode("Trust: "));
+      trustDiv.appendText("Trust: ");
       trustDiv.appendChild(_span = document.createElement("span"));
       subgroupDiv.appendChild(trustDiv);
 

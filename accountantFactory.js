@@ -44,6 +44,16 @@ var accountantFactory = function(initial) {
     return true;
   };
 
+  var creditCents = function(cents) {
+    if (!isValidCents(cents, "credit")) return false;
+
+    _cents += cents;
+    syncSpan();
+    _centsUpdatedCallbacks.forEachCallback(_cents);
+
+    return true;
+  };
+
   return {
     getCents: function() {
       return _cents;
@@ -53,14 +63,10 @@ var accountantFactory = function(initial) {
       _span = document.getElementById(DefaultAvailableDollarsSpanId);
       syncSpan();
     },
-    creditCents: function(cents) {
-      if (!isValidCents(cents, "credit")) return false;
-
-      _cents += cents;
-      syncSpan();
-      _centsUpdatedCallbacks.forEachCallback(_cents, true); // In the wire-buyer loop
-
-      return true;
+    creditCents: creditCents,
+    creditDollars: function(dollars) {
+      var cents = getCents(dollars);
+      return this.creditCents(cents);
     },
     canDebitCents: canDebitCents,
     canDebitDollars: function(dollars) {

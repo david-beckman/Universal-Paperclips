@@ -73,18 +73,16 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
 
     var rpsDiv = document.createElement("div");
     groupDiv.insertBefore(rpsDiv, demandDiv.previousElementSibling.previousElementSibling);
-    rpsDiv.appendChild(document.createTextNode("Avg. Rev. per sec: "));
+    rpsDiv.appendText("Avg. Rev. per sec: ");
 
     _rpsSpan = document.createElement("span");
-    _rpsSpan.innerText = "{amount}";
     rpsDiv.appendChild(_rpsSpan);
 
     var cspsDiv = document.createElement("div");
     groupDiv.insertBefore(cspsDiv, demandDiv.previousElementSibling.previousElementSibling);
-    cspsDiv.appendChild(document.createTextNode("Avg. Clips Sold per sec: "));
+    cspsDiv.appendText("Avg. Clips Sold per sec: ");
 
     _cspsSpan = document.createElement("span");
-    _cspsSpan.innerText = "{amount}";
     cspsDiv.appendChild(_cspsSpan);
   };
 

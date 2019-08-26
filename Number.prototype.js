@@ -4,6 +4,9 @@ Number.isPositiveInteger = function(value, errorMessage) {
   return response;
 };
 
-Number.prototype.toUSDString = function() {
-  return this.toLocaleString(undefined, {style: "currency", currency: "USD"});
+Number.prototype.toUSDString = function(hideCents) {
+  var options = {style: "currency", currency: "USD"};
+  if (hideCents) options.minimumFractionDigits = options.maximumFractionDigits = 0;
+
+  return this.toLocaleString(undefined, options);
 };

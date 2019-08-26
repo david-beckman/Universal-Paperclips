@@ -1,5 +1,6 @@
 var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
-    creativityStorage, megaclipperFactory, operationsStorage, quantumComputer, trustWarehouse, wireMarket, wireSupplier, initial) {
+    creativityStorage, megaclipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader, trustWarehouse, wireMarket,
+    wireSupplier, initial) {
   if (!accountant || !accountant.getCents || !accountant.addCentsUpdatedCallback) {
     console.assert(false, "No accountant connected to the project tracker.");
     return;
@@ -61,7 +62,17 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     return;
   }
 
-  if (!trustWarehouse || !trustWarehouse.useTrust) {
+  if (!stockMarket || !stockMarket.incrementGain) {
+    console.assert(false, "No stock market connected to the project tracker.");
+    return;
+  }
+
+  if (!stockTrader || !stockTrader.enable) {
+    console.assert(false, "No stock trader connected to the project tracker.");
+    return;
+  }
+
+  if (!trustWarehouse || !trustWarehouse.getTrust || !trustWarehouse.useTrust) {
     console.assert(false, "No trust warehouse connected to the project tracker.");
     return;
   }
@@ -229,10 +240,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       return false;
     },
     trigger: function() {
-      /*
-       * TODO: stockGainThreshold = stockGainThreshold + .01;
-       * Stocks are 51% positive rather than 50% positive - This is the same as an investment engine upgrade
-       */
+      stockMarket.incrementGain();
       return trustWarehouse.increaseTrust(10);
     },
     postTriggerMessages: ["Cancer is cured, +10 TRUST, global stock prices trending upward"]
@@ -245,10 +253,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
       return false;
     },
     trigger: function() {
-      /*
-       * TODO: stockGainThreshold = stockGainThreshold + .01;
-       * Stocks are 51% positive rather than 50% positive - This is the same as an investment engine upgrade
-       */
+      stockMarket.incrementGain();
       return trustWarehouse.increaseTrust(10);
     },
     postTriggerMessages: [
@@ -462,8 +467,16 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     trigger: quantumComputer.addChip,
     postTriggerMessages: ["Photonic chip added"],
     disableAppliedTracking: true
+  }, { // 33
+    title: "Algorithmic Trading",
+    description: "Develop an investment engine for generating funds",
+    cost: { operations: 10e3 },
+    isVisible: function() {
+      return trustWarehouse.getTrust() >= 8;
+    },
+    trigger: stockTrader.enable,
+    postTriggerMessages: ["Investment engine unlocked"]
   }
-  // Algorithmic Trading
   // Hostile Takeover
   // Full Monopoly
   // A Token of Goodwill...
@@ -595,13 +608,13 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     titleSpan.innerText = ProjectList[index].title;
     titleDiv.appendChild(titleSpan);
     if (creat || ops || trust) {
-      titleDiv.appendChild(document.createTextNode(" ("));
-      if (creat) titleDiv.appendChild(document.createTextNode(creat.toLocaleString() + " creat"));
-      if (creat && ops) titleDiv.appendChild(document.createTextNode(", "));
-      if (ops) titleDiv.appendChild(document.createTextNode(ops.toLocaleString() + " ops"));
-      if ((creat || ops) && trust) titleDiv.appendChild(document.createTextNode(", "));
-      if (trust) titleDiv.appendChild(document.createTextNode( + trust.toLocaleString() + " Trust"));
-      titleDiv.appendChild(document.createTextNode(")"));
+      titleDiv.appendText(" (");
+      if (creat) titleDiv.appendText(creat.toLocaleString() + " creat");
+      if (creat && ops) titleDiv.appendText(", ");
+      if (ops) titleDiv.appendText(ops.toLocaleString() + " ops");
+      if ((creat || ops) && trust) titleDiv.appendText(", ");
+      if (trust) titleDiv.appendText( + trust.toLocaleString() + " Trust");
+      titleDiv.appendText(")");
     }
 
     var descriptionDiv = document.createElement("div");

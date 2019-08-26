@@ -54,7 +54,7 @@ var quantumComputerFactory = function(operationsStorage, initial) {
     button.value = "Compute";
     buttonRow.appendChild(button);
 
-    buttonRow.appendChild(document.createTextNode(" "));
+    buttonRow.appendText(" ");
 
     button.onclick = function() {
       if (buttonRow.lastChild.classList && buttonRow.lastChild.classList.contains("fadable")) buttonRow.removeChild(buttonRow.lastChild);

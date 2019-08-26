@@ -65,9 +65,9 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
     trustWarehouse.bind(trustDiv);
 
     var productionGoalDiv = document.createElement("div");
-    productionGoalDiv.appendChild(document.createTextNode("+1 Trust at: "));
+    productionGoalDiv.appendText("+1 Trust at: ");
     productionGoalDiv.appendChild(_productionSpan = document.createElement("span"));
-    productionGoalDiv.appendChild(document.createTextNode(" clips"));
+    productionGoalDiv.appendText(" clips");
     trustDiv.appendChild(productionGoalDiv);
 
     var cpuDiv = document.createElement("div");
@@ -93,7 +93,7 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
   milestoneTracker.addFibonacciLevelUpdatedCallback(function() {
     if (!cpu.isEnabled()) {
       consoleAppender.append("Trust-Constrained Self-Modification enabled");
-      enabling = true;
+      enabling = true; // prevent the processor / memory added comments
       cpu.enable();
       create();
     } else {

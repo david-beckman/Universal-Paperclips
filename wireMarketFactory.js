@@ -71,7 +71,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   var syncAll = function() {
     syncBuyButtonDisabledFlag();
     if (!_dollarsSpan) return;
-    _dollarsSpan.innerText = _dollars.toLocaleString(undefined, {style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0});
+    _dollarsSpan.innerText = _dollars.toUSDString(true);
   };
 
   var buyWire = function() {
@@ -105,7 +105,7 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
     button.type = "button";
     button.value = "WireBuyer";
     buyerDiv.appendChild(button);
-    buyerDiv.appendChild(document.createTextNode(" "));
+    buyerDiv.appendText(" ");
     var span = document.createElement("span");
     buyerDiv.appendChild(span);
 

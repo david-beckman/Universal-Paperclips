@@ -84,7 +84,7 @@ var cpuFactory = function(trustWarehouse, initial) {
         _processorsUpdatedCallbacks.forEachCallback(_processors);
       };
       processorsDiv.appendChild(_processorButton);
-      processorsDiv.appendChild(document.createTextNode(" "));
+      processorsDiv.appendText(" ");
       processorsDiv.appendChild(_processorsSpan = document.createElement("span"));
       _processorsSpan.id = "processorsSpan";
       subgroupDiv.appendChild(processorsDiv);
@@ -106,7 +106,7 @@ var cpuFactory = function(trustWarehouse, initial) {
         _memoryUpdatedCallbacks.forEachCallback(_memory);
       };
       memoryDiv.appendChild(_memoryButton);
-      memoryDiv.appendChild(document.createTextNode(" "));
+      memoryDiv.appendText(" ");
       memoryDiv.appendChild(_memorySpan = document.createElement("span"));
       _memorySpan.id = "memorySpan";
       subgroupDiv.appendChild(memoryDiv);

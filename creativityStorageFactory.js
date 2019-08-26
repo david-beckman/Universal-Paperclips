@@ -31,7 +31,7 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
     if (!_subgroupDiv) return;
 
     var creativityDiv = document.createElement("div");
-    creativityDiv.appendChild(document.createTextNode("Creativity: "));
+    creativityDiv.appendText("Creativity: ");
     creativityDiv.appendChild(_span = document.createElement("span"));
     _subgroupDiv.appendChild(creativityDiv);
 
