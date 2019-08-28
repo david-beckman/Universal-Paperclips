@@ -1,8 +1,11 @@
 var trustWarehouseFactory = function(initial) {
+  const InitialBribes = 0;
   const InitialTrust = 2;
 
+  var _bribes = (initial && initial.bribes) || InitialBribes;
+  var _bribesUpdatedCallbacks = [];
   var _trust = (initial && initial.trust) || InitialTrust;
-  var _trustUpdatedCallbacks = new Array();
+  var _trustUpdatedCallbacks = [];
 
   var _span;
 
@@ -15,26 +18,11 @@ var trustWarehouseFactory = function(initial) {
   };
 
   return {
-    getTrust() {
-      return _trust;
+    addBribesUpdatedCallback: function(callback) {
+      if (typeof(callback) === "function") _bribesUpdatedCallbacks.push(callback);
     },
-    increaseTrust(amount) {
-      if (!isValid(amount)) return false;
-
-      _trust += amount;
-      _trustUpdatedCallbacks.forEachCallback(_trust);
-      syncSpan();
-
-      return true;
-    },
-    useTrust(amount) {
-      if (!isValid(amount)) return false;
-
-      _trust -= amount;
-      _trustUpdatedCallbacks.forEachCallback(_trust);
-      syncSpan();
-
-      return true;
+    addTrustUpdatedCallback: function(callback) {
+      if (typeof(callback) === "function") _trustUpdatedCallbacks.push(callback);
     },
     bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
@@ -46,13 +34,47 @@ var trustWarehouseFactory = function(initial) {
 
       syncSpan();
     },
+    bribe: function() {
+      _bribes++;
+      _trust++;
+
+      syncSpan();
+
+      _bribesUpdatedCallbacks.forEachCallback(_bribes);
+      _trustUpdatedCallbacks.forEachCallback(_trust);
+    },
+    getBribes: function() {
+      return _bribes;
+    },
+    getBribeDollars: function() {
+      return 500e3 * Math.pow(2, _bribes);
+    },
+    getTrust: function() {
+      return _trust;
+    },
+    increaseTrust: function(amount) {
+      if (!isValid(amount)) return false;
+
+      _trust += amount;
+      _trustUpdatedCallbacks.forEachCallback(_trust);
+      syncSpan();
+
+      return true;
+    },
     serialize: function() {
       return {
+        bribes: _bribes,
         trust: _trust
       };
     },
-    addTrustUpdatedCallback: function(callback) {
-      if (callback) _trustUpdatedCallbacks.push(callback);
+    useTrust: function(amount) {
+      if (!isValid(amount)) return false;
+
+      _trust -= amount;
+      _trustUpdatedCallbacks.forEachCallback(_trust);
+      syncSpan();
+
+      return true;
     }
   };
 };

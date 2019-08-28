@@ -26,8 +26,8 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _clippers = (initial && initial.clippers) || InitialClippers;
   var _efficiency = (initial && initial.efficiency) || InitialEfficiency;
-  var _clippersUpdatedCallbacks = new Array();
-  var _efficiencyUpdatedCallbacks = new Array();
+  var _clippersUpdatedCallbacks = [];
+  var _efficiencyUpdatedCallbacks = [];
 
   var getCents = function() {
     if (_clippers == InitialClippers) return InitialCents;
@@ -150,10 +150,10 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
       };
     },
     addClippersUpdatedCallback: function(callback) {
-      if (callback) _clippersUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _clippersUpdatedCallbacks.push(callback);
     },
     addEfficiencyUpdatedCallback: function(callback) {
-      if (callback) _efficiencyUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _efficiencyUpdatedCallbacks.push(callback);
     }
   };
 };

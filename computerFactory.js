@@ -1,4 +1,5 @@
-var computerFactory = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker, quantumComputer, trustWarehouse, _) {
+var computerFactory = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker,
+    quantumComputer, trustWarehouse, _) {
   if (!consoleAppender || !consoleAppender.append) {
     console.assert(false, "No console appender connected to the computer.");
     return;
@@ -14,7 +15,8 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
     return;
   }
 
-  if (!milestoneTracker || !milestoneTracker.getFibonacciClipTarget || !milestoneTracker.addFibonacciLevelUpdatedCallback || !milestoneTracker.incrementFibonacciLevel) {
+  if (!milestoneTracker || !milestoneTracker.getFibonacciClipTarget || !milestoneTracker.addFibonacciLevelUpdatedCallback ||
+      !milestoneTracker.incrementFibonacciLevel) {
     console.assert(false, "No milestone tracker connected to the computer.");
     return;
   }
@@ -97,7 +99,9 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
       cpu.enable();
       create();
     } else {
-      consoleAppender.append("Production target met: TRUST INCREASED, additional processor/memory capacity granted");
+      if (trustWarehouse.getTrust() < 50) {
+        consoleAppender.append("Production target met: TRUST INCREASED, additional processor/memory capacity granted");
+      }
       trustWarehouse.increaseTrust(1);
     }
 
@@ -118,9 +122,11 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
       return;
     }
 
-    consoleAppender.append(creativityStorage.isEnabled() ?
-      "Processor added, operations (or creativity) per sec increased" :
-      "Processor added, operations per sec increased");
+    if (processors < 25) {
+      consoleAppender.append(creativityStorage.isEnabled() ?
+        "Processor added, operations (or creativity) per sec increased" :
+        "Processor added, operations per sec increased");
+    }
   });
 
   cpu.addMemoryUpdatedCallback(function(memory) {
@@ -131,7 +137,9 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
       return;
     }
 
-    consoleAppender.append("Memory added, max operations increased");
+    if (memory < 25) {
+      consoleAppender.append("Memory added, max operations increased");
+    }
   });
 
   return {

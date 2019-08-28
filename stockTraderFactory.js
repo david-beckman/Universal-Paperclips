@@ -17,7 +17,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
   const InitialDollars = 0;
   const InitialEnabled = false;
   const InitialInjectedDollars = 0;
-  const InitialReportTimeout = 1e6; // 1,000s = 16m 40s (timeout rather than interval due to the length)
+  const InitialReportTimeout = 100e3; // 100s = 1m 40s (timeout rather than interval due to the length)
   const InitialRiskName = "Low Risk";
   const InitialSellStockTimeout = 10e3; // 10s
 
@@ -39,7 +39,8 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
   var _injectedDollars = (initial && initial.injectedDollars) || InitialInjectedDollars;
   var _riskName = (initial && initial.riskName) || InitialRiskName;
   var _reportTime = new Date().getTime() + ((initial && initial.reportTimeout) || InitialReportTimeout);
-  var _sellStockTime = new Date().getTime() + (initial && (initial.sellStockTimeout || initial.sellStockTimeout === 0) ? initial.sellStockTimeout : InitialSellStockTimeout);
+  var _sellStockTime = new Date().getTime() +
+    (initial && (initial.sellStockTimeout || initial.sellStockTimeout === 0) ? initial.sellStockTimeout : InitialSellStockTimeout);
 
   var _columnDiv;
   var _dollarsSpan;
@@ -50,7 +51,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
   var appendReport = function() {
     if (!_enabled) return;
 
-    var amt = getTotal() - _injectedDollars;
+    var amt = getTotalDollars() - _injectedDollars;
     consoleAppender.append("Lifetime investment revenue report: " + amt.toUSDString());
 
     _reportTime = new Date().getTime() + InitialReportTimeout;
@@ -65,7 +66,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
     return InitialRiskName;
   };
 
-  var getTotal = function() {
+  var getTotalDollars = function() {
     return _dollars + stockMarket.getStockDollars();
   }
 
@@ -175,7 +176,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
     stockMarket.bind(outlined);
 
     syncSpans();
-    
+
     // TODO - Investment Engine Upgrade
   };
 
@@ -184,7 +185,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
 
     _riskName = getRiskName();
     var riskLevel = riskMap[_riskName];
-    var total = getTotal();
+    var total = getTotalDollars();
     var budget = Math.ceil(total / riskLevel);
     var reserve = _riskName === HighRiskName ? 0 : Math.ceil(total / (11 - riskLevel));
 
@@ -224,7 +225,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
       if (!_enabled) return;
 
       build();
-      
+
       /*
        * This will handle the case that the user has some time less than the InitialReportTimeout until the next report.
        */
@@ -240,6 +241,7 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
       _reportTime = new Date().getTime() + InitialReportTimeout;
       setInterval(appendReport, InitialReportTimeout);
     },
+    getTotalDollars: getTotalDollars,
     serialize: function() {
       return {
         dollars: _dollars,

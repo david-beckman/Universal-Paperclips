@@ -12,8 +12,8 @@ var clipMarketingFactory = function(accountant, initial) {
 
   var _level = (initial && initial.level) || InitialLevel;
   var _effectiveness = (initial && initial.effectiveness) || InitialEffectiveness;
-  var _levelUpdatedCallbacks = new Array();
-  var _effectivenessUpdatedCallbacks = new Array();
+  var _levelUpdatedCallbacks = [];
+  var _effectivenessUpdatedCallbacks = [];
 
   var getDollars = function() {
     return BaseDollars * Math.pow(IncrementPower, _level - 1);
@@ -76,10 +76,10 @@ var clipMarketingFactory = function(accountant, initial) {
       return true;
     },
     addLevelUpdatedCallback: function(callback) {
-      if (callback) _levelUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _levelUpdatedCallbacks.push(callback);
     },
     addEffectivenessUpdatedCallback: function(callback) {
-      if (callback) _effectivenessUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _effectivenessUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

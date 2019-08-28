@@ -84,7 +84,7 @@
 var makeClipButton = document.getElementById("makeClipButton");
 for (var i=0; i<20; i++) setTimeout(() => {makeClipButton.click();}, i);
 
-var targetWirePrice = 15;
+var targetWirePrice = 16;
 
 var wireSpoolDollarsSpan = document.getElementById("wireSpoolDollarsSpan");
 var getWireSpoolDollars = () => { return parseInt(wireSpoolDollarsSpan.innerText.substring(1).replace(/,/g, "")); };
@@ -110,6 +110,7 @@ var getClipDollars = () => { return parseFloat(clipDollarsSpan.innerText.substri
 var createClipperButton, clipperDollarsSpan;
 var getClipperDollars = () => { return clipperDollarsSpan ? parseFloat(clipperDollarsSpan.innerText.substring(1).replace(/,/g, "")) : 0; };
 setInterval(() => {
+  if (getWireLength() <= 0) return;
   // TODO: switch to megaclippers when available
   if (!createClipperButton) createClipperButton = document.getElementById("createClipperButton");
   if (!clipperDollarsSpan) clipperDollarsSpan = document.getElementById("clipperDollarsSpan");
@@ -118,7 +119,7 @@ setInterval(() => {
 
   var theoreticalClips = getUnshippedClips() + getWireLength();
   var assets = theoreticalClips * getClipDollars() + getAvailableDollars();
-  if ((targetWirePrice + getClipperDollars()) <= assets) createClipperButton.click();
+  if (((targetWirePrice * 1.5) + getClipperDollars()) <= assets) createClipperButton.click();
 }, 100);
 
 var processorsButton;

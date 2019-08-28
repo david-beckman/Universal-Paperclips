@@ -16,8 +16,8 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
 
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _creativity = (initial && initial.creativity) || InitialCreativity;
-  var _enabledUpdatedCallbacks = new Array();
-  var _creativityUpdatedCallbacks = new Array();
+  var _enabledUpdatedCallbacks = [];
+  var _creativityUpdatedCallbacks = [];
 
   var _subgroupDiv;
   var _span;
@@ -101,10 +101,10 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
       };
     },
     addCreativityUpdatedCallback: function(callback) {
-      if (callback) _creativityUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _creativityUpdatedCallbacks.push(callback);
     },
     addEnabledUpdatedCallback: function(callback) {
-      if (callback) _enabledUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _enabledUpdatedCallbacks.push(callback);
     }
   };
 };

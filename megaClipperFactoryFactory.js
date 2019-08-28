@@ -22,8 +22,8 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _clippers = (initial && initial.clippers) || InitialClippers;
   var _efficiency = (initial && initial.efficiency) || InitialEfficiency;
-  var _enabledUpdatedCallbacks = new Array();
-  var _efficiencyUpdatedCallbacks = new Array();
+  var _enabledUpdatedCallbacks = [];
+  var _efficiencyUpdatedCallbacks = [];
 
   var _groupDiv;
   var _button;
@@ -137,10 +137,10 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
       };
     },
     addEnabledUpdatedCallback: function(callback) {
-      if (callback) _enabledUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _enabledUpdatedCallbacks.push(callback);
     },
     addEfficiencyUpdatedCallback: function(callback) {
-      if (callback) _efficiencyUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _efficiencyUpdatedCallbacks.push(callback);
     }
   };
 };

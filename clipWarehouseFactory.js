@@ -7,7 +7,7 @@ var clipWarehouseFactory = function(clipFactory, initial) {
   const InitialShipped = 0;
 
   var _shipped = (initial && initial.shipped) || InitialShipped;
-  var _shippedUpdatedCallbacks = new Array();
+  var _shippedUpdatedCallbacks = [];
 
   var getUnshipped = function() {
     return clipFactory.getClips() - _shipped;

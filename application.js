@@ -66,9 +66,9 @@
   (quantumComputer = quantumComputerFactory(operationsStorage, savedGame.quantumComputer)).bind();
 
   // Level 6 ...
-  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
-      creativityStorage, megaClipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader, trustWarehouse, wireMarket,
-      wireSupplier, savedGame.projectTracker))
+  (projectTracker = projectTrackerFactory(accountant, autoclipperFactory, clipFactory, clipMarketing, clipSeller, clipWarehouse,
+      consoleAppender, cpu, creativityStorage, megaClipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader,
+      trustWarehouse, wireMarket, wireSupplier, savedGame.projectTracker))
     .bind();
 
   // Level 7 ...

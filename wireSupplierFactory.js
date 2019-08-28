@@ -4,7 +4,7 @@ var wireSupplierFactory = function(initial) {
 
   var _length = (initial && (initial.length || initial.length === 0)) ? initial.length : InitialLength;
   var _spoolLength = (initial && initial.spoolLength) || InitialSpoolLength;
-  var _lengthUpdatedCallbacks = new Array();
+  var _lengthUpdatedCallbacks = [];
 
   var _span;
   var syncSpan = function() {
@@ -61,7 +61,7 @@ var wireSupplierFactory = function(initial) {
       syncSpan();
     },
     addLengthUpdatedCallback: function(callback) {
-      if (callback) _lengthUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _lengthUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

@@ -25,9 +25,9 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
   const DollarsIncreaseAmount = .05;
 
   var _dollars = (initial && initial.dollars) || InitialDollars;
-  var _dollarsUpdatedCallbacks = new Array();
+  var _dollarsUpdatedCallbacks = [];
   var _purchases = (initial && initial.purchases) || InitialPurchases;
-  var _purchasesUpdatedCallbacks = new Array();
+  var _purchasesUpdatedCallbacks = [];
   var _baseDollars = (initial && initial.baseDollars) || InitialBaseDollars;
   var _marketCounter = (initial && initial.marketCounter) || InitialMarketCounter;
   var _wireBuyerEnabled = (initial && initial.wireBuyerEnabled) || InitialWireBuyerEnabled;
@@ -161,10 +161,10 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
       };
     },
     addDollarsUpdatedCallback: function(callback) {
-      if (callback) _dollarsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _dollarsUpdatedCallbacks.push(callback);
     },
     addPurchasesUpdatedCallback: function(callback) {
-      if (callback) _purchasesUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _purchasesUpdatedCallbacks.push(callback);
     }
   };
 };

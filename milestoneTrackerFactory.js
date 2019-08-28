@@ -15,10 +15,10 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
 
   const FibonacciFactor = 1e3;
   const LogMilestones = [
-    { value: 5e2 }, // 500
+    { value: 500 },
     { value: 1e3 }, // 1,000
-    { value: 1e4 }, // 10,000
-    { value: 1e5 }, // 100,000
+    { value: 10e3 }, // 10,000
+    { value: 100e3 }, // 100,000
     { value: 1e6 }, // 1,000,000 - One Million
     // {value: 1e9, display: "One Billion"},
     { value: 1e12, display: "One Trillion"},
@@ -31,7 +31,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
 
   var _logLevel = (initial && initial.logLevel) || InitialLogLevel;
   var _fibonacciLevel = (initial && initial.fibonacciLevel) || InitialFibonacciLevel;
-  var _fibonacciLevelUpdatedCallbacks = new Array();
+  var _fibonacciLevelUpdatedCallbacks = [];
   var _startTime = new Date();
   var _ticks = (initial && initial.ticks) || InitialTicks;
 
@@ -100,7 +100,7 @@ var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
     bind: function() { },
     incrementFibonacciLevel: incrementFibonacciLevel,
     addFibonacciLevelUpdatedCallback: function(callback) {
-      if (callback) _fibonacciLevelUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _fibonacciLevelUpdatedCallbacks.push(callback);
     },
     getFibonacciClipTarget: getFibonacciClipTarget,
     serialize: function() {

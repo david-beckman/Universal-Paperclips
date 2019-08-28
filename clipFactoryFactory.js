@@ -72,7 +72,7 @@ var clipFactoryFactory = function(wireSupplier, initial) {
       }, CPSInterval);
     },
     addClipsUpdatedCallback: function(callback) {
-      if (callback) _clipsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _clipsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

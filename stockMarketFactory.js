@@ -25,7 +25,7 @@ var stockMarketFactory = function(initial) {
   ];
 
   var _gainRate = (initial && initial.gainRate) || InitialGainRate;
-  var _stockDollarsUpdatedCallbacks = new Array();
+  var _stockDollarsUpdatedCallbacks = [];
   var _stocks = (initial && initial.stocks) || InitialStocks;
 
   var _stocksBody;
@@ -42,10 +42,10 @@ var stockMarketFactory = function(initial) {
 
   var build = function(parent) {
     var stockTable = document.createElement("table");
-    stockTable.className = "small";
     parent.appendChild(stockTable);
 
     var stockHeader = document.createElement("thead");
+    stockHeader.className = "small";
     stockTable.appendChild(stockHeader);
 
     var stockHeaderRow = document.createElement("tr");
@@ -147,7 +147,7 @@ var stockMarketFactory = function(initial) {
 
   return {
     addStockDollarsUpdatedCallback: function(callback) {
-      if (callback) _stockDollarsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _stockDollarsUpdatedCallbacks.push(callback);
     },
     bind: function(parentNode) {
       if (!parentNode) return;
@@ -156,9 +156,9 @@ var stockMarketFactory = function(initial) {
     },
     buyStock: function(dollars, riskLevel) {
       if (!Number.isPositiveInteger(dollars) || _stocks.length > MaxStocks) return { stock: null, remainingDollars: dollars };
-      
+
       var stock = _stocks[_stocks.length] = generateStock(dollars, riskLevel);
-      
+
       syncTable();
       _stockDollarsUpdatedCallbacks.forEachCallback(getStockDollars());
 

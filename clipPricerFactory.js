@@ -2,7 +2,7 @@ var clipPricerFactory = function(initial) {
   const InitialCents = 25;
 
   var _cents = (initial && initial.cents) || InitialCents;
-  var _centsUpdatedCallbacks = new Array();
+  var _centsUpdatedCallbacks = [];
 
   return {
     getCents: function() {
@@ -38,7 +38,7 @@ var clipPricerFactory = function(initial) {
       };
     },
     addCentsUpdatedCallback: function(callback) {
-      if (callback) _centsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _centsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

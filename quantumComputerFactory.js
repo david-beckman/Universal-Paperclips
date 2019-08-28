@@ -17,7 +17,7 @@ var quantumComputerFactory = function(operationsStorage, initial) {
 
   var _chips = (initial && initial.chips) || InitialChips;
   var _enabled = (initial && initial.enabled) || InitialEnabled;
-  var _enabledUpdatedCallbacks = new Array();
+  var _enabledUpdatedCallbacks = [];
 
   var _chipDivs;
   var _groupdiv;
@@ -37,7 +37,7 @@ var quantumComputerFactory = function(operationsStorage, initial) {
     var chipRow = document.createElement("div");
     subGroupDiv.appendChild(chipRow);
 
-    _chipDivs = new Array();
+    _chipDivs = [];
     for (var i=0; i<MaxChips; i++) {
       var chip = _chipDivs[i] = document.createElement("div");
       chip.className = "chip";
@@ -92,7 +92,7 @@ var quantumComputerFactory = function(operationsStorage, initial) {
       _chips[_chips.length] = 0;
     },
     addEnabledUpdatedCallback: function(callback) {
-      if (callback) _enabledUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _enabledUpdatedCallbacks.push(callback);
     },
     bind: function(groupDiv) {
       if (!groupDiv) return;

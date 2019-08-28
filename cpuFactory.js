@@ -17,8 +17,8 @@ var cpuFactory = function(trustWarehouse, initial) {
   var _processors = (initial && initial.processors) || InitialProcessors;
   var _memory = (initial && initial.memory) || InitialMemory;
 
-  var _processorsUpdatedCallbacks = new Array();
-  var _memoryUpdatedCallbacks = new Array();
+  var _processorsUpdatedCallbacks = [];
+  var _memoryUpdatedCallbacks = [];
 
   var _processorButton;
   var _processorsSpan;
@@ -114,10 +114,10 @@ var cpuFactory = function(trustWarehouse, initial) {
       syncAll();
     },
     addMemoryUpdatedCallback: function(callback) {
-      if (callback) _memoryUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _memoryUpdatedCallbacks.push(callback);
     },
     addProcessorsUpdatedCallback: function(callback) {
-      if (callback) _processorsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _processorsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

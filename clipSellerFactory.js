@@ -20,8 +20,10 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   }
 
   const InitialRevTrackerEnabled = false;
+  const InitialDemandBoost = 1;
 
   var _revTrackerEnabled = (initial && initial.revTrackerEnabled) || InitialRevTrackerEnabled;
+  var _demandBoost = (initial && initial.demandBoost) || InitialDemandBoost;
 
   const MarketingPower = 1.1;
   const PricingFactor = 80;
@@ -34,7 +36,7 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
   var _demandSpan;
 
   var getDemandPercent = function() {
-    var marketingBoost = Math.pow(MarketingPower, clipMarketing.getLevel() - 1) * clipMarketing.getEffectiveness();
+    var marketingBoost = Math.pow(MarketingPower, clipMarketing.getLevel() - 1) * clipMarketing.getEffectiveness() * _demandBoost;
     var pricingBoost = PricingFactor / clipPricer.getCents();
     return marketingBoost * pricingBoost;
   };
@@ -120,12 +122,19 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
 
       syncSpans();
     },
+    boostDemand: function(factor) {
+      if (!Number.isPositiveInteger(factor)) return false;
+
+      _demandBoost *= factor;
+      return true;
+    },
     enableRevTracker: function() {
       _revTrackerEnabled = true;
       addRevTracker();
     },
     serialize: function() {
       return {
+        demandBoost: _demandBoost,
         revTrackerEnabled: _revTrackerEnabled
       };
     }

@@ -3,7 +3,7 @@ var accountantFactory = function(initial) {
   const InitialCents = 0;
 
   var _cents = (initial && initial.cents) || InitialCents;
-  var _centsUpdatedCallbacks = new Array();
+  var _centsUpdatedCallbacks = [];
 
   var _span;
 
@@ -84,7 +84,7 @@ var accountantFactory = function(initial) {
       };
     },
     addCentsUpdatedCallback: function(callback) {
-      if (callback) _centsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _centsUpdatedCallbacks.push(callback);
     }
   };
 };

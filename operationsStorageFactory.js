@@ -19,7 +19,7 @@ var operationsStorageFactory = function(cpu, initial) {
   var _buffer = (initial && initial.buffer) || InitialBuffer;
   var _fadeTime = new Date().getTime() + (initial && initial.fadeTimespan) || InitialFadeTimespan
   var _operations = (initial && initial.operations) || InitialOperations;
-  var _operationsUpdatedCallbacks = new Array();
+  var _operationsUpdatedCallbacks = [];
 
   var _operationsSpan;
   var _maxSpan;
@@ -146,7 +146,7 @@ var operationsStorageFactory = function(cpu, initial) {
       syncSpans();
     },
     addOperationsUpdatedCallback: function(callback) {
-      if (callback) _operationsUpdatedCallbacks.push(callback);
+      if (typeof(callback) === "function") _operationsUpdatedCallbacks.push(callback);
     },
     serialize: function() {
       return {

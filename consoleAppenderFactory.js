@@ -31,7 +31,7 @@ var consoleAppenderFactory = function(initial) {
 
       return true;
     },
-    serialize() {
+    serialize: function() {
       return {
         messages: (_div && Array.from(_div.childNodes).map(function(child) { return child.innerText; })) || _pendingMessages
       };

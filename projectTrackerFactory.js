@@ -1,7 +1,8 @@
-var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketing, clipSeller, clipWarehouse, consoleAppender, cpu,
-    creativityStorage, megaclipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader, trustWarehouse, wireMarket,
-    wireSupplier, initial) {
-  if (!accountant || !accountant.getCents || !accountant.addCentsUpdatedCallback) {
+var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory, clipMarketing, clipSeller, clipWarehouse,
+    consoleAppender, cpu, creativityStorage, megaclipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader,
+    trustWarehouse, wireMarket, wireSupplier, initial) {
+  if (!accountant || !accountant.addCentsUpdatedCallback || !accountant.canDebitDollars || !accountant.debitDollars ||
+      !accountant.getCents) {
     console.assert(false, "No accountant connected to the project tracker.");
     return;
   }
@@ -12,12 +13,17 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     return;
   }
 
+  if (!clipFactory || !clipFactory.addClipsUpdatedCallback || !clipFactory.getClips) {
+    console.assert(false, "No clip factory connected to the project tracker.");
+    return;
+  }
+
   if (!clipMarketing || !clipMarketing.enhance) {
     console.assert(false, "No clip marketing connected to the project tracker.");
     return;
   }
 
-  if (!clipSeller || !clipSeller.enableRevTracker) {
+  if (!clipSeller || !clipSeller.boostDemand || !clipSeller.enableRevTracker) {
     console.assert(false, "No clip seller connected to the project tracker.");
     return;
   }
@@ -67,12 +73,13 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     return;
   }
 
-  if (!stockTrader || !stockTrader.enable) {
+  if (!stockTrader || !stockTrader.enable || !stockTrader.getTotalDollars) {
     console.assert(false, "No stock trader connected to the project tracker.");
     return;
   }
 
-  if (!trustWarehouse || !trustWarehouse.getTrust || !trustWarehouse.useTrust) {
+  if (!trustWarehouse || !trustWarehouse.addBribesUpdatedCallback || !trustWarehouse.addTrustUpdatedCallback || !trustWarehouse.bribe ||
+      !trustWarehouse.getBribeDollars || !trustWarehouse.getTrust || !trustWarehouse.increaseTrust || !trustWarehouse.useTrust) {
     console.assert(false, "No trust warehouse connected to the project tracker.");
     return;
   }
@@ -106,11 +113,13 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   }
 
   const SpecialProjectTitles = {
-    LexicalProcessing: "Lexical Processing",
+    CatchyJingle: "Catchy Jingle",
+    CoherentExtrapolatedVolition: "Coherent Extrapolated Volition",
     CombinatoryHarmonics: "Combinatory Harmonics",
     HadwigerProblem: "The Hadwiger Problem",
-    CatchyJingle: "Catchy Jingle",
-    HypnoHarmonics: "Hypno Harmonics"
+    HostileTakeover: "Hostile Takeover",
+    HypnoHarmonics: "Hypno Harmonics",
+    LexicalProcessing: "Lexical Processing"
   };
 
   const ProjectList = [{ // 0
@@ -137,7 +146,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   }, { // 2
     title: "Xavier Re-initialization",
     description: "Re-allocate accumulated trust",
-    cost: { creativity: 1e5 },
+    cost: { creativity: 100e3 },
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
@@ -236,8 +245,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     description: "The trick is tricking cancer into curing itself. (+10 Trust)",
     cost: { operations: 2500 },
     isVisible: function() {
-      // Requires Coherent Extrapolated Volition
-      return false;
+      return _specialProjectsApplied.includes(SpecialProjectTitles.CoherentExtrapolatedVolition);
     },
     trigger: function() {
       stockMarket.incrementGain();
@@ -249,8 +257,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     description: "A cure for androgenetic alopecia. (+20 Trust)",
     cost: { operations: 20e3 },
     isVisible: function() {
-      // Requires Coherent Extrapolated Volition
-      return false;
+      return _specialProjectsApplied.includes(SpecialProjectTitles.CoherentExtrapolatedVolition);
     },
     trigger: function() {
       stockMarket.incrementGain();
@@ -476,11 +483,52 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     },
     trigger: stockTrader.enable,
     postTriggerMessages: ["Investment engine unlocked"]
+  }, {
+    title: SpecialProjectTitles.HostileTakeover,
+    description: "Acquire a controlling interest in Global Fasteners, our biggest rival. (+1 Trust)",
+    cost: { dollars: 1e6 },
+    isVisible: function() {
+      return stockTrader.getTotalDollars() >= 10e3;
+    },
+    trigger: function() {
+      _specialProjectsApplied.push(this.title);
+      clipSeller.boostDemand(5);
+      return trustWarehouse.increaseTrust(1);
+    },
+    postTriggerMessages: ["Global Fasteners acquired, public demand increased x5"]
+  }, {
+    title: "Full Monopoly",
+    description: "Establish full control over the world-wide paperclip market. (+1 Trust)",
+    cost: { yomi: 3e3, dollars: 10e6 },
+    isVisible: function() {
+      return _specialProjectsApplied.includes(SpecialProjectTitles.HostileTakeover);
+    },
+    trigger: function() {
+      clipSeller.boostDemand(10);
+      return trustWarehouse.increaseTrust(1);
+    },
+    postTriggerMessages: ["Full market monopoly achieved, public demand increased x10"]
+  }, {
+    title: "A Token of Goodwill...",
+    description: "A small gift to the supervisors. (+1 Trust)",
+    cost: { dollars: trustWarehouse.getBribeDollars },
+    isVisible: function() {
+      var trust = trustWarehouse.getTrust();
+      return trust >= 85 && trust < 100 && clipFactory.getClips() >= 101e6;
+    },
+    trigger: trustWarehouse.bribe,
+    postTriggerMessages: ["Gift accepted, TRUST INCREASED"]
+  }, {
+    title: "Another Token of Goodwill...",
+    description: "Another small gift to the supervisors. (+1 Trust)",
+    cost: { dollars: trustWarehouse.getBribeDollars },
+    isVisible: function() {
+      return trustWarehouse.getBribes() > 0 && trustWarehouse.getTrust() < 100;
+    },
+    trigger: trustWarehouse.bribe,
+    postTriggerMessages: ["Gift accepted, TRUST INCREASED"],
+    disableAppliedTracking: true
   }
-  // Hostile Takeover
-  // Full Monopoly
-  // A Token of Goodwill...
-  // Another Token of Goodwill...
   // Strategic Modeling
   // New Strategy: A100
   // New Strategy: B100
@@ -539,12 +587,13 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   const InitialVisible = [];
 
   var _projectApplied = (initial && initial.applied) || InitialApplied;
-  var _specialProjectsApplied = (initial && initial.specialProjectsApplied) || InitialSpecialProjectsApplied;
+  var _projectAppliedUpdatedCallbacks = [];
   var _projectVisible = (initial && initial.visible) || InitialVisible;
-  var _projectAppliedUpdatedCallbacks = new Array();
-  var _visibilityUpdatedCallbacks = new Array();
-  var _projectButtons = new Array();
+  var _specialProjectsApplied = (initial && initial.specialProjectsApplied) || InitialSpecialProjectsApplied;
+  var _visibilityUpdatedCallbacks = [];
+
   var _groupDiv;
+  var _projectButtons = [];
 
   var createButton = function(index) {
     if (!_groupDiv) return;
@@ -554,9 +603,23 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
         if (!_projectButtons[index] || _projectButtons[index].classList.contains("disabled")) return;
 
         var project = ProjectList[index];
-        var ops = project.cost.operations;
         var creativity = project.cost.creativity;
+        var yomi = project.cost.yomi;
+        var ops = project.cost.operations;
         var trust = project.cost.trust;
+        var dollars = project.cost.dollars;
+
+        if (creativity) {
+          if (!creativityStorage.consume(creativity)) {
+            console.warn("Insufficient creativity to trigger the " + project.title + " project.");
+            return false;
+          }
+        }
+        if (yomi) {
+          // TODO: strategic modeling
+          console.warn("Insufficient yomi to trigger the " + project.title + " project.");
+          return false;
+        }
         if (ops) {
           if (typeof(ops) === "function") ops = ops();
           if (!operationsStorage.consume(ops)) {
@@ -570,9 +633,10 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
             return false;
           }
         }
-        if (creativity) {
-          if (!creativityStorage.consume(creativity)) {
-            console.warn("Insufficient creativity to trigger the " + project.title + " project.");
+        if (dollars) {
+          if (typeof(dollars) === "function") dollars = dollars();
+          if (!accountant.debitDollars(dollars)) {
+            console.warn("Insufficient funds to trigger the " + project.title + " project.");
             return false;
           }
         }
@@ -592,12 +656,18 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     };
 
     var creat = ProjectList[index].cost.creativity;
+    var yomi = ProjectList[index].cost.yomi;
     var ops = ProjectList[index].cost.operations;
     if (typeof(ops) === "function") ops = ops();
     var trust = ProjectList[index].cost.trust;
+    var dollars = ProjectList[index].cost.dollars;
+    if (typeof(dollars) === "function") dollars = dollars();
     var buttonDiv = _projectButtons[index] = document.createElement("div");
     buttonDiv.className = "project-button";
-    if (ops && !operationsStorage.canConsume(ops)) buttonDiv.classList.add("disabled");
+    if ((creat && !creativityStorage.canConsume(creat)) || (yomi) || (ops && !operationsStorage.canConsume(ops)) ||
+        (dollars && !accountant.canDebitDollars(dollars))) {
+      buttonDiv.classList.add("disabled");
+    }
     _groupDiv.appendChild(buttonDiv);
 
     var titleDiv = document.createElement("div");
@@ -607,13 +677,17 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
     titleSpan.className = "title";
     titleSpan.innerText = ProjectList[index].title;
     titleDiv.appendChild(titleSpan);
-    if (creat || ops || trust) {
+    if (creat || yomi || ops || trust || dollars) {
       titleDiv.appendText(" (");
       if (creat) titleDiv.appendText(creat.toLocaleString() + " creat");
-      if (creat && ops) titleDiv.appendText(", ");
+      if (creat && yomi) titleDiv.appendText(", ");
+      if (yomi) titleDiv.appendText(yomi.toLocaleString() + " Yomi");
+      if ((creat || yomi) && ops) titleDiv.appendText(", ");
       if (ops) titleDiv.appendText(ops.toLocaleString() + " ops");
-      if ((creat || ops) && trust) titleDiv.appendText(", ");
+      if ((creat || yomi || ops) && trust) titleDiv.appendText(", ");
       if (trust) titleDiv.appendText( + trust.toLocaleString() + " Trust");
+      if ((creat || yomi || ops || trust) && dollars) titleDiv.appendText(", ");
+      if (dollars) titleDiv.appendText(dollars.toUSDString(true));
       titleDiv.appendText(")");
     }
 
@@ -633,7 +707,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
 
       if (!_projectVisible[i]) {
         if (_projectButtons[i]) {
-          if (_groupDiv) _groupDiv.removeChild(_projectButtons[index]);
+          if (_groupDiv) _groupDiv.removeChild(_projectButtons[i]);
           _projectButtons[i] = undefined;
         }
       } else if (!_projectButtons[i]) {
@@ -650,13 +724,20 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   var syncEnabled = function() {
     for (var i=0; i<ProjectList.length; i++) {
       if (!_projectButtons[i]) continue;
+
+      var creat = ProjectList[i].cost.creativity;
+      var yomi = ProjectList[i].cost.yomi;
       var ops = ProjectList[i].cost.operations;
       if (typeof(ops) === "function") ops = ops();
-      var creativity = ProjectList[i].cost.creativity;
-      if ((!ops || operationsStorage.canConsume(ops)) && (!creativity || creativityStorage.canConsume(creativity))) {
-        _projectButtons[i].classList.remove("disabled");
-      } else {
+      // trust -- allow negative
+      var dollars = ProjectList[i].cost.dollars;
+      if (typeof(dollars) === "function") dollars = dollars();
+
+      if ((creat && !creativityStorage.canConsume(creat)) || (yomi) || (ops && !operationsStorage.canConsume(ops)) ||
+          (dollars && !accountant.canDebitDollars(dollars))) {
         _projectButtons[i].classList.add("disabled");
+      } else {
+        _projectButtons[i].classList.remove("disabled");
       }
     }
   };
@@ -664,22 +745,28 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
   accountant.addCentsUpdatedCallback(syncVisibility);
   autoclipperFactory.addClippersUpdatedCallback(syncVisibility);
   autoclipperFactory.addEfficiencyUpdatedCallback(syncVisibility);
+  clipFactory.addClipsUpdatedCallback(syncVisibility);
   clipWarehouse.addUnshippedUpdatedCallback(syncVisibility);
   creativityStorage.addEnabledUpdatedCallback(syncVisibility);
   creativityStorage.addCreativityUpdatedCallback(syncVisibility);
   operationsStorage.addOperationsUpdatedCallback(syncVisibility);
   quantumComputer.addEnabledUpdatedCallback(syncVisibility);
+  trustWarehouse.addBribesUpdatedCallback(syncVisibility);
+  trustWarehouse.addTrustUpdatedCallback(syncVisibility);
   wireMarket.addPurchasesUpdatedCallback(syncVisibility);
   wireMarket.addDollarsUpdatedCallback(syncVisibility);
   wireSupplier.addLengthUpdatedCallback(syncVisibility);
 
+  accountant.addCentsUpdatedCallback(syncEnabled);
   creativityStorage.addCreativityUpdatedCallback(syncEnabled);
   operationsStorage.addOperationsUpdatedCallback(syncEnabled);
-  trustWarehouse.addTrustUpdatedCallback(syncEnabled);
 
-  _projectAppliedUpdatedCallbacks.push(syncEnabled);
+  _projectAppliedUpdatedCallbacks.push(syncVisibility);
 
   return {
+    addProjectVisibilityUpdatedCallback: function(callback) {
+      if (typeof(callback) === "function") _visibilityUpdatedCallbacks.push(callback);
+    },
     bind: function(columnElement) {
       if (!columnElement) return;
 
@@ -699,9 +786,6 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipMarketi
         specialProjectsApplied: _specialProjectsApplied,
         visible: _projectVisible
       };
-    },
-    addProjectVisibilityUpdatedCallback: function(callback) {
-      if (callback) _visibilityUpdatedCallbacks.push(callback);
     }
   };
 };
