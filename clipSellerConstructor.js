@@ -1,4 +1,4 @@
-var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWarehouse, initial) {
+var clipSellerConstructor = function(accountant, clipMarketing, clipPricer, clipWarehouse, initial) {
   if (!accountant || !accountant.creditCents) {
     console.assert(false, "No accountant hooked to the seller.");
     return false;
@@ -73,19 +73,15 @@ var clipSellerFactory = function(accountant, clipMarketing, clipPricer, clipWare
     var demandDiv = _demandSpan.parentNode;
     var groupDiv = demandDiv.parentNode;
 
-    var rpsDiv = document.createElement("div");
+    var rpsDiv = document.createFullElement("div", undefined, {innerText: "Avg. Rev. per sec: "});
     groupDiv.insertBefore(rpsDiv, demandDiv.previousElementSibling.previousElementSibling);
-    rpsDiv.appendText("Avg. Rev. per sec: ");
 
-    _rpsSpan = document.createElement("span");
-    rpsDiv.appendChild(_rpsSpan);
+    _rpsSpan = rpsDiv.appendElement("span");
 
-    var cspsDiv = document.createElement("div");
+    var cspsDiv = document.createFullElement("div", undefined, {innerText: "Avg. Clips Sold per sec: "});
     groupDiv.insertBefore(cspsDiv, demandDiv.previousElementSibling.previousElementSibling);
-    cspsDiv.appendText("Avg. Clips Sold per sec: ");
 
-    _cspsSpan = document.createElement("span");
-    cspsDiv.appendChild(_cspsSpan);
+    _cspsSpan = cspsDiv.appendElement("span");
   };
 
   setInterval(function() {

@@ -1,4 +1,4 @@
-var stockTraderFactory = function(accountant, consoleAppender, stockMarket, initial) {
+var stockTraderConstructor = function(accountant, consoleAppender, stockMarket, initial) {
   if (!accountant || !accountant.creditDollars || !accountant.debitDollars || !accountant.getCents) {
     console.assert(false, "No accountant hooked to the stock trader.");
     return;
@@ -11,7 +11,8 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
 
   if (!stockMarket || !stockMarket.addStockDollarsUpdatedCallback || !stockMarket.bind || !stockMarket.buyStock ||
       !stockMarket.getLength || !stockMarket.getMaxLength || !stockMarket.getStockDollars || !stockMarket.sellStock) {
-    console.assert(false, "No stock market hooked to the stock trader.")
+    console.assert(false, "No stock market hooked to the stock trader.");
+    return;
   }
 
   const InitialDollars = 0;
@@ -80,98 +81,71 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
   var build = function() {
     if (!_columnDiv) return;
 
-    var groupDiv = document.createElement("div");
-    groupDiv.className = "group";
+    var groupDiv = document.createFullElement("div", undefined, {className: "group"});
     _columnDiv.insertBefore(groupDiv, _columnDiv.firstChild); // This works even when firstChild is undefined
 
-    var outlined = document.createElement("div");
-    outlined.className = "outlined";
-    groupDiv.appendChild(outlined);
+    var outlined = groupDiv.appendElement("div", undefined, {className: "outlined"});
+    var titleRow = outlined.appendElement("div", undefined, {className: "row"});
 
-    var titleRow = document.createElement("div");
-    titleRow.className = "row";
-    outlined.appendChild(titleRow);
+    titleRow.appendElement("h3", undefined, {innerText: "Investments"});
 
-    var title = document.createElement("h3");
-    title.innerText = "Investments";
-    titleRow.appendChild(title);
-
-    _select = document.createElement("select");
     titleRow.appendText(" ");
-    titleRow.appendChild(_select);
+    _select = titleRow.appendElement("select");
 
     RiskNames.forEach(function(name) {
-      var option = document.createElement("option");
-      option.innerText = name;
+      var option = _select.appendElement("option", undefined, {innerText: name});
       if (_riskName === name) option.selected = true;
-      _select.appendChild(option);
     });
 
-    var buttonColumn = document.createElement("div");
-    buttonColumn.className = "column";
-    outlined.appendChild(buttonColumn);
+    var buttonColumn = outlined.appendElement("div", undefined, {className: "column"});
 
-    var depositRow = document.createElement("div");
-    buttonColumn.appendChild(depositRow);
-    var depositButton = document.createElement("input");
-    depositButton.type = "button";
-    depositButton.value = "Deposit";
-    depositRow.appendChild(depositButton);
+    buttonColumn
+      .appendElement("div")
+      .appendElement("input", undefined, {
+        type: "button",
+        value: "Deposit",
+        onclick: function() {
+          var transfer = Math.floor(accountant.getCents() / CentsPerDollar);
+          if (!accountant.debitDollars(transfer)) {
+            console.assert(false, "Cannot transfer - something bad happened debiting " + transfer);
+            return;
+          }
+          _injectedDollars += transfer;
+          _dollars += transfer;
+          syncSpans();
+        }
+      });
 
-    depositButton.onclick = function() {
-      var transfer = Math.floor(accountant.getCents() / CentsPerDollar);
-      if (!accountant.debitDollars(transfer)) {
-        console.assert(false, "Cannot transfer - something bad happened debiting " + transfer);
-        return;
-      }
-      _injectedDollars += transfer;
-      _dollars += transfer;
-      syncSpans();
-    };
+    buttonColumn
+      .appendElement("div")
+      .appendElement("input", undefined, {
+        type: "button",
+        value: "Withdraw",
+        onclick: function() {
+          if (_dollars == 0) return;
+          if (!accountant.creditDollars(_dollars)) {
+            console.assert(false, "Cannot transfer - something bad happened crediting " + _dollars);
+            return;
+          }
+          _injectedDollars -= _dollars;
+          _dollars = 0;
+          syncSpans();
+        }
+      });
 
-    var withdrawRow = document.createElement("div");
-    buttonColumn.appendChild(withdrawRow);
-    var withdrawButton = document.createElement("input");
-    withdrawButton.type = "button";
-    withdrawButton.value = "Withdraw";
-    withdrawRow.appendChild(withdrawButton);
+    var stateColumn = outlined.appendElement("div", undefined, {className: "column small"});
 
-    withdrawButton.onclick = function() {
-      if (_dollars == 0) return;
-      if (!accountant.creditDollars(_dollars)) {
-        console.assert(false, "Cannot transfer - something bad happened crediting " + _dollars);
-        return;
-      }
-      _injectedDollars -= _dollars;
-      _dollars = 0;
-      syncSpans();
-    };
+    _dollarsSpan = stateColumn
+      .appendElement("div", undefined, {innerText: "Cash: "})
+      .appendElement("span");
 
-    var stateColumn = document.createElement("div");
-    stateColumn.className = "column small";
-    outlined.appendChild(stateColumn);
+    _stocksSpan = stateColumn
+      .appendElement("div", undefined, {innerText: "Stocks: "})
+      .appendElement("span");
 
-    var dollarsRow = document.createElement("div");
-    dollarsRow.appendText("Cash: ");
-    stateColumn.appendChild(dollarsRow);
-
-    _dollarsSpan = document.createElement("span");
-    dollarsRow.appendChild(_dollarsSpan);
-
-    var stocksRow = document.createElement("div");
-    stocksRow.appendText("Stocks: ");
-    stateColumn.appendChild(stocksRow);
-
-    _stocksSpan = document.createElement("span");
-    stocksRow.appendChild(_stocksSpan);
-
-    var totalRow = document.createElement("div");
-    totalRow.className = "strong";
-    totalRow.appendText("Total: ");
-    stateColumn.appendChild(totalRow);
-
-    _totalSpan = document.createElement("span");
-    totalRow.appendChild(_totalSpan);
+    _totalSpan = stateColumn
+      .appendElement("div", undefined, {className: "strong", innerText: "Total: "})
+      .appendElement("span");
 
     stockMarket.bind(outlined);
 
@@ -219,20 +193,21 @@ var stockTraderFactory = function(accountant, consoleAppender, stockMarket, init
 
   stockMarket.addStockDollarsUpdatedCallback(syncSpans);
 
+  /*
+   * This will handle the case that the user has some time less than the InitialReportTimeout until the next report.
+   */
+  setTimeout(function() {
+    appendReport();
+    setInterval(appendReport, InitialReportTimeout);
+  }, _reportTime - new Date().getTime());
+
   return {
     bind: function() {
-      _columnDiv = document.getElementById("thirdColumnDiv");
+      const DefaultThirdColumnDivId = "thirdColumnDiv";
+      _columnDiv = document.getElementById(DefaultThirdColumnDivId);
       if (!_enabled) return;
 
       build();
-
-      /*
-       * This will handle the case that the user has some time less than the InitialReportTimeout until the next report.
-       */
-      setTimeout(function() {
-        appendReport();
-        setInterval(appendReport, InitialReportTimeout);
-      }, _reportTime - new Date().getTime());
     },
     enable: function() {
       _enabled = true;

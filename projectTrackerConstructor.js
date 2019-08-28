@@ -1,4 +1,4 @@
-var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory, clipMarketing, clipSeller, clipWarehouse,
+var projectTrackerConstructor = function(accountant, autoclipperFactory, clipFactory, clipMarketing, clipSeller, clipWarehouse,
     consoleAppender, cpu, creativityStorage, megaclipperFactory, operationsStorage, quantumComputer, stockMarket, stockTrader,
     trustWarehouse, wireMarket, wireSupplier, initial) {
   if (!accountant || !accountant.addCentsUpdatedCallback || !accountant.canDebitDollars || !accountant.debitDollars ||
@@ -96,19 +96,19 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     return;
   }
 
-  var incrementTrustFactory = function(value) {
+  var incrementTrustConstructor = function(value) {
     return function() { return trustWarehouse.increaseTrust(value); };
   };
 
-  var enhanceAutoclipperFactory = function(value) {
+  var enhanceAutoclipperConstructor = function(value) {
     return function() { return autoclipperFactory.enhance(value); };
   };
 
-  var enhanceMegaclipperFactory = function(value) {
+  var enhanceMegaclipperConstructor = function(value) {
     return function() { return megaclipperFactory.enhance(value); };
   };
 
-  var increaseWireSpoolLengthFactory = function(value) {
+  var increaseWireSpoolLengthConstructor = function(value) {
     return function() { return wireSupplier.increaseSpoolLength(value)};
   }
 
@@ -160,7 +160,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return creativityStorage.isEnabled();
     },
-    trigger: incrementTrustFactory(1),
+    trigger: incrementTrustConstructor(1),
     postTriggerMessages: ["There was an AI made of dust, whose poetry gained it man's trust..."]
   }, { // 4
     title: "Limerick (cont.)",
@@ -223,7 +223,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
-    trigger: incrementTrustFactory(1),
+    trigger: incrementTrustConstructor(1),
     postTriggerMessages: [
       "The Tóth Sausage Conjecture: proven, TRUST INCREASED",
       "You can't invent a design. You recognize it, in the fourth dimension. -D.H. Lawrence"
@@ -235,7 +235,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return creativityStorage.canConsume(this.cost.creativity);
     },
-    trigger: incrementTrustFactory(1),
+    trigger: incrementTrustConstructor(1),
     postTriggerMessages: [
       "Donkey Space: mapped, TRUST INCREASED",
       "Every commercial transaction has within itself an element of trust. - Kenneth Arrow"
@@ -274,7 +274,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return cpu.isEnabled() && autoclipperFactory.getClippers() > 0;
     },
-    trigger: enhanceAutoclipperFactory(25),
+    trigger: enhanceAutoclipperConstructor(25),
     postTriggerMessages: ["AutoClippper performance boosted by 25%"]
   }, { // 13
     title: "Even Better AutoClippers",
@@ -283,7 +283,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return autoclipperFactory.getEfficiency() >= 1.25;
     },
-    trigger: enhanceAutoclipperFactory(50),
+    trigger: enhanceAutoclipperConstructor(50),
     postTriggerMessages: ["AutoClippper performance boosted by another 50%"]
   }, { // 14
     title: "Optimized AutoClippers",
@@ -292,7 +292,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return autoclipperFactory.getEfficiency() >= 1.75;
     },
-    trigger: enhanceAutoclipperFactory(75),
+    trigger: enhanceAutoclipperConstructor(75),
     postTriggerMessages: ["AutoClippper performance boosted by another 75%"]
   }, { // 15
     title: "Hadwiger Clip Diagrams",
@@ -301,7 +301,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return _specialProjectsApplied.includes(SpecialProjectTitles.HadwigerProblem);
     },
-    trigger: enhanceAutoclipperFactory(500),
+    trigger: enhanceAutoclipperConstructor(500),
     postTriggerMessages: ["AutoClippper performance improved by 500%"]
   }, { // 16
     title: "Improved Wire Extrusion",
@@ -310,7 +310,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return cpu.isEnabled() && wireMarket.getPurchases() > 0;
     },
-    trigger: increaseWireSpoolLengthFactory(50),
+    trigger: increaseWireSpoolLengthConstructor(50),
     postTriggerMessages: ["Wire extrusion technique improved, 1,500 supply from every spool"]
   }, { // 17
     title: "Optimized Wire Extrusion",
@@ -319,7 +319,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return wireSupplier.getSpoolLength() >= 1500;
     },
-    trigger: increaseWireSpoolLengthFactory(75),
+    trigger: increaseWireSpoolLengthConstructor(75),
     postTriggerMessages: ["Wire extrusion technique improved, 2,625 supply from every spool"]
   }, { // 18
     title: "Microlattice Shapecasting",
@@ -328,7 +328,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return wireSupplier.getSpoolLength() >= 2625;
     },
-    trigger: increaseWireSpoolLengthFactory(100),
+    trigger: increaseWireSpoolLengthConstructor(100),
     postTriggerMessages: ["Using microlattice shapecasting techniques we now get 5,250 supply from every spool"]
   }, { // 19
     title: "Spectral Froth Annealment",
@@ -337,7 +337,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return wireSupplier.getSpoolLength() >= 5250;
     },
-    trigger: increaseWireSpoolLengthFactory(200),
+    trigger: increaseWireSpoolLengthConstructor(200),
     postTriggerMessages: ["Using spectral froth annealment we now get 15,750 supply from every spool"]
   }, { // 20
     title: "Quantum Foam Annealment",
@@ -346,7 +346,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return wireMarket.getDollars() >= 125;
     },
-    trigger: increaseWireSpoolLengthFactory(1e3),
+    trigger: increaseWireSpoolLengthConstructor(1e3),
     postTriggerMessages: ["Using quantum foam annealment we now get 173,250 supply from every spool"]
   }, { // 21
     title: "RevTracker",
@@ -380,7 +380,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     description: "Increases MegaClipper performance 25%",
     cost: { operations: 14e3 },
     isVisible: megaclipperFactory.isEnabled,
-    trigger: enhanceMegaclipperFactory(25),
+    trigger: enhanceMegaclipperConstructor(25),
     postTriggerMessages: ["MegaClippper performance increased by 25%"]
   }, { // 25
     title: "Even Better MegaClippers",
@@ -389,7 +389,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return megaclipperFactory.getEfficiency() >= 1.25
     },
-    trigger: enhanceMegaclipperFactory(50),
+    trigger: enhanceMegaclipperConstructor(50),
     postTriggerMessages: ["MegaClippper performance increased by 50%"]
   }, { // 26
     title: "Optimized MegaClippers",
@@ -398,7 +398,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     isVisible: function() {
       return megaclipperFactory.getEfficiency() >= 1.75
     },
-    trigger: enhanceMegaclipperFactory(100),
+    trigger: enhanceMegaclipperConstructor(100),
     postTriggerMessages: ["MegaClippper performance increased by 100%"]
   }, { // 27
     title: " New Slogan",
@@ -598,7 +598,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
   var createButton = function(index) {
     if (!_groupDiv) return;
 
-    var onclickFactory = function(index) {
+    var onclickConstructor = function(index) {
       return function() {
         if (!_projectButtons[index] || _projectButtons[index].classList.contains("disabled")) return;
 
@@ -662,21 +662,18 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     var trust = ProjectList[index].cost.trust;
     var dollars = ProjectList[index].cost.dollars;
     if (typeof(dollars) === "function") dollars = dollars();
-    var buttonDiv = _projectButtons[index] = document.createElement("div");
-    buttonDiv.className = "project-button";
+    var buttonDiv = _projectButtons[index] = _groupDiv.appendElement("div", undefined, {
+      className: "project-button",
+      onclick: onclickConstructor(index)
+    });
     if ((creat && !creativityStorage.canConsume(creat)) || (yomi) || (ops && !operationsStorage.canConsume(ops)) ||
         (dollars && !accountant.canDebitDollars(dollars))) {
       buttonDiv.classList.add("disabled");
     }
-    _groupDiv.appendChild(buttonDiv);
 
-    var titleDiv = document.createElement("div");
-    buttonDiv.appendChild(titleDiv);
+    var titleDiv = buttonDiv.appendElement("div");
 
-    var titleSpan = document.createElement("span");
-    titleSpan.className = "title";
-    titleSpan.innerText = ProjectList[index].title;
-    titleDiv.appendChild(titleSpan);
+    titleDiv.appendElement("span", undefined, {className: "title", innerText: ProjectList[index].title});
     if (creat || yomi || ops || trust || dollars) {
       titleDiv.appendText(" (");
       if (creat) titleDiv.appendText(creat.toLocaleString() + " creat");
@@ -691,11 +688,7 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
       titleDiv.appendText(")");
     }
 
-    var descriptionDiv = document.createElement("div");
-    descriptionDiv.innerText = ProjectList[index].description;
-    buttonDiv.appendChild(descriptionDiv);
-
-    buttonDiv.onclick = onclickFactory(index);
+    buttonDiv.appendElement("div", undefined, {innerText: ProjectList[index].description});
   };
 
   var syncVisibility = function() {
@@ -770,13 +763,8 @@ var projectTrackerFactory = function(accountant, autoclipperFactory, clipFactory
     bind: function(columnElement) {
       if (!columnElement) return;
 
-      _groupDiv = document.createElement("div");
-      _groupDiv.className = "group";
-      columnElement.appendChild(_groupDiv);
-
-      var heading = document.createElement("h2");
-      heading.innerText = "Projects";
-      _groupDiv.appendChild(heading);
+      _groupDiv = columnElement.appendElement("div", undefined, {className: "group"});
+      _groupDiv.appendElement("h2", undefined, {innerText: "Projects"});
 
       syncVisibility();
     },

@@ -1,4 +1,4 @@
-var clipFactoryFactory = function(wireSupplier, initial) {
+var clipFactoryConstructor = function(wireSupplier, initial) {
   if (!wireSupplier || !wireSupplier.getLength ||  !wireSupplier.use || !wireSupplier.canUse || !wireSupplier.addLengthUpdatedCallback) {
     console.assert(false, "No wire supplier hooked to the factory.");
     return false;

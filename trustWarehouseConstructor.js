@@ -1,4 +1,4 @@
-var trustWarehouseFactory = function(initial) {
+var trustWarehouseConstructor = function(initial) {
   const InitialBribes = 0;
   const InitialTrust = 2;
 
@@ -27,10 +27,9 @@ var trustWarehouseFactory = function(initial) {
     bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
-      var trustDiv = document.createElement("div");
-      trustDiv.appendText("Trust: ");
-      trustDiv.appendChild(_span = document.createElement("span"));
-      subgroupDiv.appendChild(trustDiv);
+      _span = subgroupDiv
+        .appendElement("div", undefined, {innerText: "Trust: "})
+        .appendElement("span");
 
       syncSpan();
     },

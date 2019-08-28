@@ -1,4 +1,4 @@
-var milestoneTrackerFactory = function(clipFactory, consoleAppender, initial) {
+var milestoneTrackerConstructor = function(clipFactory, consoleAppender, initial) {
   if (!clipFactory || !clipFactory.addClipsUpdatedCallback) {
     console.assert(false, "No clip factory connected to the milestone tracker.");
     return;

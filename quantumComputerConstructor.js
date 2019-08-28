@@ -1,4 +1,4 @@
-var quantumComputerFactory = function(operationsStorage, initial) {
+var quantumComputerConstructor = function(operationsStorage, initial) {
   if (!operationsStorage || !operationsStorage.addTempOperations) {
     console.assert(false, "No operations storage connected to the quantum computer.");
     return;
@@ -19,77 +19,66 @@ var quantumComputerFactory = function(operationsStorage, initial) {
   var _enabled = (initial && initial.enabled) || InitialEnabled;
   var _enabledUpdatedCallbacks = [];
 
-  var _chipDivs;
+  var _chipRowDiv;
   var _groupdiv;
 
   var create = function() {
     if (!_groupDiv) return;
 
-    var subGroupDiv = document.createElement("div");
-    subGroupDiv.classList.add("outlined");
-    subGroupDiv.classList.add("sub-group");
-    _groupDiv.appendChild(subGroupDiv);
+    var subGroupDiv = _groupDiv.appendElement("div", undefined, {className: "sub-group outlined"});
+    subGroupDiv.appendElement("h3", undefined, {innerText: "Quantum Computing"});
 
-    var title = document.createElement("h3");
-    title.innerText = "Quantum Computing";
-    subGroupDiv.appendChild(title);
+    _chipRowDiv = subGroupDiv.appendElement("div", undefined, {id: "qChipsDiv"});
 
-    var chipRow = document.createElement("div");
-    subGroupDiv.appendChild(chipRow);
-
-    _chipDivs = [];
-    for (var i=0; i<MaxChips; i++) {
-      var chip = _chipDivs[i] = document.createElement("div");
-      chip.className = "chip";
-      chip.style.opacity = _chips.length > i ? Math.max(0, _chips[i]) : 0;
-      chipRow.appendChild(chip);
+    for (var i=0; i<_chips.length; i++) {
+      var chip = _chipRowDiv.appendElement("div", undefined, {className: "chip"});
+      chip.style.opacity = Math.max(0, _chips[i]);
     }
 
-    var buttonRow = document.createElement("div");
-    subGroupDiv.appendChild(buttonRow);
+    var buttonRow = subGroupDiv.appendElement("div");
 
-    var button = document.createElement("input");
-    button.type = "button";
-    button.id = "computeQuantumButton";
-    button.value = "Compute";
-    buttonRow.appendChild(button);
+    buttonRow.appendElement("input", undefined, {
+      type: "button",
+      id: "computeQuantumButton",
+      value: "Compute",
+      onclick: function() {
+        if (buttonRow.lastChild.classList && buttonRow.lastChild.classList.contains("fadable")) buttonRow.removeChild(buttonRow.lastChild);
+        var span = buttonRow.appendElement("span", undefined, {className: "fadable"});
+        setTimeout(function() { span.classList.add("fade-out"); }, FadeTimeout);
+
+        if (_chips.length === InitialChips.length) {
+          span.innerText = "Need Photonic Chips";
+          return;
+        }
+
+        var value = Math.ceil(_chips.reduce(function(a, b) { return a + b;}) * ComputeFactor);
+        span.innerText = "Operations: " + value.toLocaleString();
+        operationsStorage.addTempOperations(value);
+      }
+    });
 
     buttonRow.appendText(" ");
-
-    button.onclick = function() {
-      if (buttonRow.lastChild.classList && buttonRow.lastChild.classList.contains("fadable")) buttonRow.removeChild(buttonRow.lastChild);
-      var span = document.createElement("span");
-      span.classList.add("fadable");
-      setTimeout(function() { span.classList.add("fade-out"); }, FadeTimeout);
-      buttonRow.appendChild(span);
-
-      if (_chips.length === InitialChips.length) {
-        span.innerText = "Need Photonic Chips";
-        return;
-      }
-
-      var value = Math.ceil(_chips.reduce(function(a, b) { return a + b;}) * ComputeFactor);
-      span.innerText = "Operations: " + value.toLocaleString();
-      operationsStorage.addTempOperations(value);
-    };
   };
 
   setInterval(function() {
     var counter = Math.round(new Date().getTime() / UpdateInterval);
     for (var i=0; i<_chips.length; i++) {
       _chips[i] = Math.sin(counter * (i + 1) * CounterFactor);
-      _chipDivs[i].style.opacity = Math.max(0, _chips[i]);
+      _chipRowDiv.children[i].style.opacity = Math.max(0, _chips[i]);
     }
   }, UpdateInterval);
 
   return {
     addChip: function() {
-      if (_chips >= MaxChips) {
+      if (_chips.length >= MaxChips) {
         console.assert(false, "Cannot add chips beyond the max: " + MaxChips);
         return false;
       }
 
       _chips[_chips.length] = 0;
+      
+      if (!_chipRowDiv) return;
+      _chipRowDiv.appendElement("div", undefined, {className: "chip"});
     },
     addEnabledUpdatedCallback: function(callback) {
       if (typeof(callback) === "function") _enabledUpdatedCallbacks.push(callback);

@@ -1,4 +1,4 @@
-var computerFactory = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker,
+var computerConstructor = function(consoleAppender, cpu, creativityStorage, milestoneTracker, operationsStorage, projectTracker,
     quantumComputer, trustWarehouse, _) {
   if (!consoleAppender || !consoleAppender.append) {
     console.assert(false, "No console appender connected to the computer.");
@@ -52,36 +52,22 @@ var computerFactory = function(consoleAppender, cpu, creativityStorage, mileston
   var create = function() {
     if (!_div) return;
 
-    var group = document.createElement("div");
-    group.className = "group";
-    _div.appendChild(group);
+    var group = _div.appendElement("div", undefined, {className: "group"});
+    group.appendElement("h2", undefined, {innerText: "Computation Resources"});
 
-    var title = document.createElement("h2");
-    title.innerText = "Computation Resources";
-    group.appendChild(title);
-
-    var trustDiv = document.createElement("div");
-    trustDiv.className = "sub-group";
-    group.appendChild(trustDiv);
-
+    var trustDiv = group.appendElement("div", undefined, {className: "sub-group"});
     trustWarehouse.bind(trustDiv);
 
-    var productionGoalDiv = document.createElement("div");
-    productionGoalDiv.appendText("+1 Trust at: ");
-    productionGoalDiv.appendChild(_productionSpan = document.createElement("span"));
+    var productionGoalDiv = trustDiv.appendElement("div", undefined, {innerText: "+1 Trust at: "});
+    _productionSpan = productionGoalDiv.appendElement("span");
     productionGoalDiv.appendText(" clips");
-    trustDiv.appendChild(productionGoalDiv);
 
-    var cpuDiv = document.createElement("div");
-    cpuDiv.className = "sub-group";
+    var cpuDiv = group.appendElement("div", undefined, {className: "sub-group"});
     cpu.bind(cpuDiv);
-    group.appendChild(cpuDiv);
 
-    var operationsDiv = document.createElement("div");
-    operationsDiv.className = "sub-group";
+    var operationsDiv = group.appendElement("div", undefined, {className: "sub-group"});
     operationsStorage.bind(operationsDiv);
     creativityStorage.bind(operationsDiv);
-    group.appendChild(operationsDiv);
 
     quantumComputer.bind(group);
 

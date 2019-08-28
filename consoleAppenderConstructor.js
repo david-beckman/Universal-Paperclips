@@ -1,4 +1,4 @@
-var consoleAppenderFactory = function(initial) {
+var consoleAppenderConstructor = function(initial) {
   const InitialMessages = ["Welcome to Universal Paperclips"];
 
   var _pendingMessages = (initial && initial.messages) || InitialMessages;
@@ -6,10 +6,7 @@ var consoleAppenderFactory = function(initial) {
   var _div;
 
   var append = function(message) {
-    var child = document.createElement("div");
-    child.innerText = message;
-
-    _div.appendChild(child);
+    _div.appendElement("div", undefined, {innerText: message});
     _div.scrollTop = _div.scrollHeight;
   };
 

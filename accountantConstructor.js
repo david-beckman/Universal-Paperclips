@@ -1,4 +1,4 @@
-var accountantFactory = function(initial) {
+var accountantConstructor = function(initial) {
   // Money in cents - stay away from decimals (floats)
   const InitialCents = 0;
 

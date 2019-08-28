@@ -1,4 +1,4 @@
-var clipPricerFactory = function(initial) {
+var clipPricerConstructor = function(initial) {
   const InitialCents = 25;
 
   var _cents = (initial && initial.cents) || InitialCents;

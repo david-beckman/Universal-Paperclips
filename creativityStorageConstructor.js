@@ -1,4 +1,4 @@
-var creativityStorageFactory = function(cpu, operationsStorage, initial) {
+var creativityStorageConstructor = function(cpu, operationsStorage, initial) {
   if (!cpu || !cpu.getProcessors) {
     console.assert(false, "No CPU connected to the creativity storage.");
   }
@@ -30,10 +30,9 @@ var creativityStorageFactory = function(cpu, operationsStorage, initial) {
   var create = function() {
     if (!_subgroupDiv) return;
 
-    var creativityDiv = document.createElement("div");
-    creativityDiv.appendText("Creativity: ");
-    creativityDiv.appendChild(_span = document.createElement("span"));
-    _subgroupDiv.appendChild(creativityDiv);
+    _span = _subgroupDiv
+      .appendElement("div", undefined, {innerText: "Creativity: "})
+      .appendElement("span");
 
     syncSpan();
   };

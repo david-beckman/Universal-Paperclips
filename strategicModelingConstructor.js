@@ -1,0 +1,3 @@
+var strategicModelingConstructor = function(initial) {
+
+};

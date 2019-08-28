@@ -1,4 +1,4 @@
-var operationsStorageFactory = function(cpu, initial) {
+var operationsStorageConstructor = function(cpu, initial) {
   if (!cpu || !cpu.getMemory || !cpu.getProcessors || !cpu.addMemoryUpdatedCallback) {
     console.assert(false, "No CPU connected to the operations storage.");
     return false;
@@ -136,12 +136,10 @@ var operationsStorageFactory = function(cpu, initial) {
     bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
-      var operationsDiv = document.createElement("div");
-      operationsDiv.appendText("Operations: ");
-      operationsDiv.appendChild(_operationsSpan = document.createElement("span"));
+      var operationsDiv = subgroupDiv.appendElement("div", undefined, {innerText: "Operations: "});
+      _operationsSpan = operationsDiv.appendElement("span");
       operationsDiv.appendText(" / ");
-      operationsDiv.appendChild(_maxSpan = document.createElement("span"));
-      subgroupDiv.appendChild(operationsDiv);
+      _maxSpan = operationsDiv.appendElement("span");
 
       syncSpans();
     },

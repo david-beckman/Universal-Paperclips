@@ -1,4 +1,4 @@
-var stockMarketFactory = function(initial) {
+var stockMarketConstructor = function(initial) {
   const InitialGainRate = .5;
   const InitialStocks = [];
 
@@ -41,31 +41,23 @@ var stockMarketFactory = function(initial) {
   };
 
   var build = function(parent) {
-    var stockTable = document.createElement("table");
-    parent.appendChild(stockTable);
+    var stockTable = parent.appendElement("table");
 
-    var stockHeader = document.createElement("thead");
-    stockHeader.className = "small";
-    stockTable.appendChild(stockHeader);
+    var stockHeaderRow = stockTable
+      .appendElement("thead", undefined, {className: "small"})
+      .appendElement("tr");
 
-    var stockHeaderRow = document.createElement("tr");
-    stockHeader.appendChild(stockHeaderRow);
+    HeaderNames.forEach(function(name) {
+      stockHeaderRow.appendElement("th", undefined, {innerText: name});
+    });
 
-    for (var i=0; i<HeaderNames.length; i++) {
-      var headerItem = document.createElement("th");
-      headerItem.innerText = HeaderNames[i];
-      stockHeaderRow.appendChild(headerItem);
-    }
-
-    _stocksBody = document.createElement("tbody");
-    stockTable.appendChild(_stocksBody);
+    _stocksBody = stockTable.appendElement("tbody");
 
     syncTable();
   };
 
   var createCell = function(value, numeric) {
-    var cell = document.createElement("td");
-    cell.innerText = value.toLocaleString();
+    var cell = document.createFullElement("td", undefined, {innerText: value.toLocaleString()});
     if (numeric) cell.className = "numeric";
     return cell;
   };
@@ -117,8 +109,7 @@ var stockMarketFactory = function(initial) {
     var i=0;
 
     for (; i<_stocks.length; i++) {
-      var row = document.createElement("tr");
-      _stocksBody.appendChild(row);
+      var row = _stocksBody.appendElement("tr");
 
       row.appendChild(createCell(_stocks[i].symbol, false));
       row.appendChild(createCell(_stocks[i].count, true));
@@ -128,12 +119,9 @@ var stockMarketFactory = function(initial) {
     }
 
     for (; i<MaxStocks; i++) {
-      var row = document.createElement("tr");
-      _stocksBody.appendChild(row);
+      var row = _stocksBody.appendElement("tr");
       for (var j=0; j<HeaderNames.length; j++) {
-        var cell = document.createElement("td");
-        cell.innerHTML = "&nbsp;";
-        row.appendChild(cell);
+        row.appendElement("td", undefined, {innerHTML: "&nbsp;"});
       }
     }
   };

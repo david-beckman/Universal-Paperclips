@@ -1,4 +1,4 @@
-var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppender, initial) {
+var autoclipperFactoryConstructor = function(accountant, clipFactory, consoleAppender, initial) {
   if (!accountant || !accountant.canDebitCents ||  !accountant.debitCents) {
     console.assert(false, "No accountant hooked to the AutoClipper factory.");
     return false;
@@ -64,31 +64,24 @@ var autoclipperFactoryFactory = function(accountant, clipFactory, consoleAppende
   var appendSubgroup = function() {
     if (!_groupDiv) return;
 
-    var subgroup = document.createElement("div");
-    subgroup.className = "sub-group";
-    _groupDiv.appendChild(subgroup);
+    var subgroup = _groupDiv.appendElement("div", undefined, {className: "sub-group"});
+    var inputLine = subgroup.appendElement("div");
 
-    var inputLine = document.createElement("div");
-    subgroup.appendChild(inputLine);
-
-    _button = document.createElement("input");
-    _button.type = "button";
-    _button.id = "createClipperButton";
-    _button.value = "AutoClippers";
-    _button.onclick = incrementClippers;
-    syncButtonDisabledFlag();
-    inputLine.appendChild(_button);
+    _button = inputLine.appendElement("input", undefined, {
+      type: "button",
+      id: "createClipperButton",
+      value: "AutoClippers",
+      onclick: incrementClippers
+    });
 
     inputLine.appendText(" ");
-    inputLine.appendChild(_clippersSpan = document.createElement("span"));
+    _clippersSpan = inputLine.appendElement("span");
 
-    var costLine = document.createElement("div");
-    subgroup.appendChild(costLine);
+    _dollarsSpan = subgroup
+      .appendElement("div", undefined, {innerText: "Cost: "})
+      .appendElement("span", undefined, {id: "clipperDollarsSpan"});
 
-    costLine.appendText("Cost: ");
-    costLine.appendChild(_dollarsSpan = document.createElement("span"));
-    _dollarsSpan.id = "clipperDollarsSpan";
-
+    syncButtonDisabledFlag();
     syncSpans();
   };
 

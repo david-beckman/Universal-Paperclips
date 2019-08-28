@@ -1,4 +1,4 @@
-var clipMarketingFactory = function(accountant, initial) {
+var clipMarketingConstructor = function(accountant, initial) {
   if (!accountant || !accountant.canDebitDollars || !accountant.debitDollars || !accountant.addCentsUpdatedCallback) {
     console.assert(false, "No accountant hooked to marketing.");
     return;

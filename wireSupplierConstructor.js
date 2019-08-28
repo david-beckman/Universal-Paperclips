@@ -1,4 +1,4 @@
-var wireSupplierFactory = function(initial) {
+var wireSupplierConstructor = function(initial) {
   const InitialLength = 1e3;
   const InitialSpoolLength = 1e3;
 

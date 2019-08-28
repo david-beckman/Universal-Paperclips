@@ -53,29 +53,30 @@
   <script src="constants.js"></script>
   <script src="Array.prototype.js"></script>
   <script src="HTMLCollection.prototype.js"></script>
+  <script src="HTMLDocument.prototype.js"></script>
   <script src="HTMLElement.prototype.js"></script>
   <script src="Number.prototype.js"></script>
-  <script src="accountantFactory.js"></script>
-  <script src="autoclipperFactoryFactory.js"></script>
-  <script src="clipFactoryFactory.js"></script>
-  <script src="clipMarketingFactory.js"></script>
-  <script src="clipPricerFactory.js"></script>
-  <script src="clipSellerFactory.js"></script>
-  <script src="clipWarehouseFactory.js"></script>
-  <script src="computerFactory.js"></script>
-  <script src="consoleAppenderFactory.js"></script>
-  <script src="cpuFactory.js"></script>
-  <script src="creativityStorageFactory.js"></script>
-  <script src="megaClipperFactoryFactory.js"></script>
-  <script src="milestoneTrackerFactory.js"></script>
-  <script src="operationsStorageFactory.js"></script>
-  <script src="projectTrackerFactory.js"></script>
-  <script src="quantumComputerFactory.js"></script>
-  <script src="stockMarketFactory.js"></script>
-  <script src="stockTraderFactory.js"></script>
-  <script src="trustWarehouseFactory.js"></script>
-  <script src="wireMarketFactory.js"></script>
-  <script src="wireSupplierFactory.js"></script>
+  <script src="accountantConstructor.js"></script>
+  <script src="autoclipperFactoryConstructor.js"></script>
+  <script src="clipFactoryConstructor.js"></script>
+  <script src="clipMarketingConstructor.js"></script>
+  <script src="clipPricerConstructor.js"></script>
+  <script src="clipSellerConstructor.js"></script>
+  <script src="clipWarehouseConstructor.js"></script>
+  <script src="computerConstructor.js"></script>
+  <script src="consoleAppenderConstructor.js"></script>
+  <script src="cpuConstructor.js"></script>
+  <script src="creativityStorageConstructor.js"></script>
+  <script src="megaClipperFactoryConstructor.js"></script>
+  <script src="milestoneTrackerConstructor.js"></script>
+  <script src="operationsStorageConstructor.js"></script>
+  <script src="projectTrackerConstructor.js"></script>
+  <script src="quantumComputerConstructor.js"></script>
+  <script src="stockMarketConstructor.js"></script>
+  <script src="stockTraderConstructor.js"></script>
+  <script src="trustWarehouseConstructor.js"></script>
+  <script src="wireMarketConstructor.js"></script>
+  <script src="wireSupplierConstructor.js"></script>
   <script src="application.js"></script>
 </body>
 </html>
@@ -143,4 +144,48 @@ var spendTrust = () => {
   setTimeout(spendTrust, 1);
 };
 setInterval(spendTrust, 100);
+
+var qChipsDiv;
+var qComputeButton;
+var skipCounter = 0;
+var qCompute = () => {
+  if (skipCounter > 0) { skipCounter--; return;}
+  if (!qChipsDiv) qChipsDiv = document.getElementById("qChipsDiv");
+  if (!qComputeButton) qComputeButton = document.getElementById("computeQuantumButton");
+
+  if (!qChipsDiv || !qComputeButton || qChipsDiv.children.length === 0) return;
+
+  var unknown = 0;
+  var sum = 0;
+
+  qChipsDiv.children.forEach((chipDiv) => {
+    var opacity = parseFloat(chipDiv.style.opacity);
+
+    if (opacity > 0) {
+      sum += opacity;
+    } else {
+      unknown++;
+    }
+  });
+
+  if (sum <= 0) return;
+
+  var min = sum - unknown;
+
+  if (min > 0) {
+    qComputeButton.click();
+    setTimeout(qCompute, 1);
+    return;
+  }
+
+  // else mixed possibility
+  if ((sum + min) <= 0) return; // better ods that it is negative
+
+  qComputeButton.click();
+  var ops = parseInt(qComputeButton.nextElementSibling.innerText.substring("Operations: ".length));
+
+  if (ops > 0) setTimeout(qCompute, 1);
+  else skipCounter = Math.ceil(-ops / 25.0);
+};
+setInterval(qCompute, 100);
 -->

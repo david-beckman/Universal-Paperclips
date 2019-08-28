@@ -1,4 +1,4 @@
-var cpuFactory = function(trustWarehouse, initial) {
+var cpuConstructor = function(trustWarehouse, initial) {
   if (!trustWarehouse || !trustWarehouse.getTrust || !trustWarehouse.addTrustUpdatedCallback) {
     console.assert(false, "No trust warehouse connected to the CPU.");
     return;
@@ -67,49 +67,45 @@ var cpuFactory = function(trustWarehouse, initial) {
     bind: function(subgroupDiv) {
       if (!subgroupDiv) return;
 
-      var processorsDiv = document.createElement("div");
-      _processorButton = document.createElement("input");
-      _processorButton.id = "processorsButton";
-      _processorButton.type = "button";
-      _processorButton.className = "cpu-button";
-      _processorButton.value = "Processors";
-      _processorButton.onclick = function() {
-        if (!enabled()) {
-          console.warn("Insufficient trust to increment processors.");
-          return false;
+      var processorsDiv = subgroupDiv.appendElement("div");
+      _processorButton = processorsDiv.appendElement("input", undefined, {
+        type: "button",
+        id: "processorsButton",
+        className: "cpu-button",
+        value: "Processors",
+        onclick: function() {
+          if (!enabled()) {
+            console.warn("Insufficient trust to increment processors.");
+            return false;
+          }
+  
+          _processors++;
+          syncAll();
+          _processorsUpdatedCallbacks.forEachCallback(_processors);
         }
-
-        _processors++;
-        syncAll();
-        _processorsUpdatedCallbacks.forEachCallback(_processors);
-      };
-      processorsDiv.appendChild(_processorButton);
+      });
       processorsDiv.appendText(" ");
-      processorsDiv.appendChild(_processorsSpan = document.createElement("span"));
-      _processorsSpan.id = "processorsSpan";
-      subgroupDiv.appendChild(processorsDiv);
+      _processorsSpan = processorsDiv.appendElement("span", undefined, {id: "processorsSpan"});
 
-      var memoryDiv = document.createElement("div");
-      _memoryButton = document.createElement("input");
-      _memoryButton.id = "memoryButton";
-      _memoryButton.type = "button";
-      _memoryButton.className = "cpu-button";
-      _memoryButton.value = "Memory";
-      _memoryButton.onclick = function() {
-        if (!enabled()) {
-          console.warn("Insufficient trust to increment memory.");
-          return false;
+      var memoryDiv = subgroupDiv.appendElement("div");
+      _memoryButton = memoryDiv.appendElement("input", undefined, {
+        type: "button",
+        id: "memoryButton",
+        className: "cpu-button",
+        value: "Memory",
+        onclick: function() {
+          if (!enabled()) {
+            console.warn("Insufficient trust to increment memory.");
+            return false;
+          }
+  
+          _memory++;
+          syncAll();
+          _memoryUpdatedCallbacks.forEachCallback(_memory);
         }
-
-        _memory++;
-        syncAll();
-        _memoryUpdatedCallbacks.forEachCallback(_memory);
-      };
-      memoryDiv.appendChild(_memoryButton);
+      });
       memoryDiv.appendText(" ");
-      memoryDiv.appendChild(_memorySpan = document.createElement("span"));
-      _memorySpan.id = "memorySpan";
-      subgroupDiv.appendChild(memoryDiv);
+      _memorySpan = memoryDiv.appendElement("span", undefined, {id: "memorySpan"});
 
       syncAll();
     },

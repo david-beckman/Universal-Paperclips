@@ -1,4 +1,4 @@
-var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
+var megaClipperFactoryConstructor = function(accountant, clipFactory, initial) {
   if (!accountant || !accountant.canDebitCents ||  !accountant.debitCents) {
     console.assert(false, "No accountant hooked to the MegaClipper factory.");
     return false;
@@ -59,29 +59,19 @@ var megaClipperFactoryFactory = function(accountant, clipFactory, initial) {
   var appendSubgroup = function() {
     if (!_groupDiv) return;
 
-    var subgroup = document.createElement("div");
-    subgroup.className = "sub-group";
-    _groupDiv.appendChild(subgroup);
+    var subgroup = _groupDiv.appendElement("div", undefined, {className: "sub-group"});
+    var inputLine = subgroup.appendElement("div");
 
-    var inputLine = document.createElement("div");
-    subgroup.appendChild(inputLine);
-
-    _button = document.createElement("input");
-    _button.type = "button";
-    _button.value = "MegaClippers";
-    _button.onclick = incrementClippers;
-    syncButtonDisabledFlag();
-    inputLine.appendChild(_button);
+    _button = inputLine.appendElement("input", undefined, {type: "button", value: "MegaClippers", onclick: incrementClippers});
 
     inputLine.appendText(" ");
-    inputLine.appendChild(_clippersSpan = document.createElement("span"));
+    _clippersSpan = inputLine.appendElement("span");
 
-    var costLine = document.createElement("div");
-    subgroup.appendChild(costLine);
+    _dollarsSpan = subgroup
+      .appendElement("div", undefined, {innerText: "Cost: "})
+      .appendElement("span");
 
-    costLine.appendText("Cost: ");
-    costLine.appendChild(_dollarsSpan = document.createElement("span"));
-
+    syncButtonDisabledFlag();
     syncSpans();
   };
 

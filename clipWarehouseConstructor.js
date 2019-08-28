@@ -1,4 +1,4 @@
-var clipWarehouseFactory = function(clipFactory, initial) {
+var clipWarehouseConstructor = function(clipFactory, initial) {
   if (!clipFactory || !clipFactory.getClips || !clipFactory.addClipsUpdatedCallback) {
     console.assert(false, "No factory hooked up to the warehouse.");
     return;

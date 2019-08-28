@@ -1,4 +1,4 @@
-var wireMarketFactory = function(accountant, wireSupplier, initial) {
+var wireMarketConstructor = function(accountant, wireSupplier, initial) {
   if (!accountant || !accountant.canDebitDollars || !accountant.addCentsUpdatedCallback || !accountant.debitDollars) {
     console.assert(false, "No accountant hooked to the wire market.");
     return false;
@@ -101,25 +101,22 @@ var wireMarketFactory = function(accountant, wireSupplier, initial) {
     var buyerDiv = document.createElement("div");
     _buyButton.parentNode.parentNode.insertBefore(buyerDiv, _buyButton.parentNode);
 
-    var button = document.createElement("input");
-    button.type = "button";
-    button.value = "WireBuyer";
-    buyerDiv.appendChild(button);
+    var syncSpan;
+    buyerDiv.appendElement("input", undefined, {
+      type: "button",
+      value: "WireBuyer",
+      onclick: function() {
+        _wireBuyerRunning = !_wireBuyerRunning;
+        syncSpan();
+        autoBuy();
+      }
+    });
     buyerDiv.appendText(" ");
-    var span = document.createElement("span");
-    buyerDiv.appendChild(span);
+    var span = buyerDiv.appendElement("span");
 
-    var syncSpan = function() {
+    (syncSpan = function() {
       span.innerText = _wireBuyerRunning ? "ON" : "OFF";
-    };
-    syncSpan();
-
-    button.onclick = function() {
-      _wireBuyerRunning = !_wireBuyerRunning;
-      syncSpan();
-
-      autoBuy();
-    };
+    })();
   };
 
   wireSupplier.addLengthUpdatedCallback(autoBuy);
